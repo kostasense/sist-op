@@ -1,6 +1,5 @@
 import java.util.*;
 
-
 public class Algoritmos {
     static Random rd = new Random();
 
