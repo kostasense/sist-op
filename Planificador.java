@@ -7,7 +7,6 @@ public class Planificador {
 
     public static void main(String[] args) {
         parametrosAlgoritmos();
-        System.out.println(algoritmos);
         String opcion;
 
         menu();
@@ -26,10 +25,10 @@ public class Planificador {
         
 
         while (!opcion.equalsIgnoreCase("F")) {
-            int sim = rd.nextInt(35) + 20; 
-            int quantum = rd.nextInt(10) + 5; 
+            int sim = rd.nextInt(15) + 20; 
+            int quantum = rd.nextInt(6) + 5; 
             System.out.printf("%nSelección de parámetros:%n" + 
-                              "  %s%n  %s%n  %s%n" + (algoritmos.get(opcion).second().equals("Apropiativa") ? "  %s%n" : "%n"), 
+                              "  %s%n  %s%n  %s" + (algoritmos.get(opcion).second().equals("Apropiativa") ? (!opcion.equals("10") || !opcion.equals("7") ? "%n  %s%n" : "") : "%n"), 
                               "• Tipo de Planificación: " + algoritmos.get(opcion).second(), 
                               "• Algoritmo: " + algoritmos.get(opcion).first(), 
                               "• Tiempo de simulación: " + sim + " unidades", 
@@ -200,7 +199,7 @@ public class Planificador {
                            "%n  • Procesos terminados: %s" +
                            "%n  • Procesos que nunca se ejecutaron: %s" +
                            "%n  • Procesos en ejecución: %s" + 
-                           "%n  • Cambios de proceso registrados: %s%n", (terminados.isEmpty() ? "Ninguno" : terminados.substring(0, terminados.length() - 2)), (noEjecutados.isEmpty() ? "Ninguno" : noEjecutados.substring(0, noEjecutados.length() - 2)), (enEjecucion.isEmpty() ? "Ninguno" : enEjecucion.substring(0, enEjecucion.length() - 2)), pila.size());
+                           "%n  • Cambios de proceso registrados: %s%n%n", (terminados.isEmpty() ? "Ninguno" : terminados.substring(0, terminados.length() - 2)), (noEjecutados.isEmpty() ? "Ninguno" : noEjecutados.substring(0, noEjecutados.length() - 2)), (enEjecucion.isEmpty() ? "Ninguno" : enEjecucion.substring(0, enEjecucion.length() - 2)), pila.size());
     }
 
     public static int asignarCPU(int simulacion, int quantum, Proceso p) {

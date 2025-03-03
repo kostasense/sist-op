@@ -5,15 +5,16 @@ public class Algoritmos {
 
     public static void participacionEquitativa(ArrayList<Proceso> procesos, int simulacion) {
         Stack<Proceso> pila = new Stack<>(); 
-
-        int numUsuarios = rd.nextInt(procesos.size() < 5 ? procesos.size() : 5) + 1; // Ehhhhhh todavia no hace lo que quiero.
+        int numUsuarios = rd.nextInt(Math.min(5, procesos.size())) + 1; // Ehhhhhh todavia no hace lo que quiero.
 
         for(Proceso p : procesos)
             p.setUsuario(rd.nextInt(numUsuarios) + 1);
 
-        Planificador.pcb(procesos);
-
         int quantum = simulacion / numUsuarios, i = 0, terminados = 0;
+
+        System.out.printf("  • Quantum: %d%n", quantum);
+        System.out.println("\nTabla inicial de procesos:");
+        Planificador.pcb(procesos);
 
         while (simulacion > 0 && terminados < procesos.size()) {
             Proceso p = procesos.get(i++);
@@ -53,7 +54,7 @@ public class Algoritmos {
 
         public static void roundRobin(ArrayList<Proceso> procesos, int sim, int quantum) {
 
-        System.out.println("Tabla inicial de procesos");
+        System.out.println("\nTabla inicial de procesos:");
         Planificador.pcb(procesos);
 
         Stack<Proceso> pila = new Stack<>();
