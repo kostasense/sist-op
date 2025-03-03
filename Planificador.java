@@ -177,7 +177,7 @@ public class Planificador {
     public static void generarProcesos(Collection<Proceso> procesos) {
         int numProcesos = rd.nextInt(10) + 1;
         for(int i = 0; i < numProcesos; i++) {
-            procesos.add(new Proceso(procesos.size() + 1, rd.nextInt(10) + 3, (rd.nextInt(2) == 1 ? "Listo" : "Bloqueado")));
+            procesos.add(new Proceso(procesos.size() + 1, rd.nextInt(8) + 3, (rd.nextInt(2) == 1 ? "Listo" : "Bloqueado")));
         }
     }
 
