@@ -7,7 +7,6 @@ public class Planificador {
 
     public static void main(String[] args) {
         parametrosAlgoritmos();
-        System.out.println(algoritmos);
         String opcion;
 
         menu();
