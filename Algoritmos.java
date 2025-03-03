@@ -4,6 +4,7 @@ public class Algoritmos {
     static Random rd = new Random();
 
     public static void participacionEquitativa(ArrayList<Proceso> procesos, int simulacion) {
+        
         Stack<Proceso> pila = new Stack<>(); 
 
         int numUsuarios = rd.nextInt(procesos.size() < 5 ? procesos.size() : 5) + 1; // Ehhhhhh todavia no hace lo que quiero.
@@ -51,7 +52,7 @@ public class Algoritmos {
         Planificador.informe(procesos, pila);
     }
 
-        public static void roundRobin(ArrayList<Proceso> procesos, int sim, int quantum) {
+    public static void roundRobin(ArrayList<Proceso> procesos, int sim, int quantum) {
 
         System.out.println("Tabla inicial de procesos");
         Planificador.pcb(procesos);
