@@ -39,7 +39,7 @@ public class Planificador {
             generarProcesos(procesos);
 
             switch (opcion) {
-                case "1" -> RoundRobbinA.main(procesos, sim, quantum);
+                case "1" -> Algoritmos.roundRobin(procesos, sim, quantum);
                 //case 2 -> ClaseAlgoritmo.main(procesos);
                 //case 3 -> ClaseAlgoritmo.main(procesos);
                 //case 4 -> ClaseAlgoritmo.main(procesos);
@@ -48,7 +48,7 @@ public class Planificador {
                 //case 7 -> ClaseAlgoritmo.main(procesos);
                 //case 8 -> ClaseAlgoritmo.main(procesos);
                 //case 9 -> ClaseAlgoritmo.main(procesos);
-                //case 10 -> ClaseAlgoritmo.main(procesos);
+                case "10" -> Algoritmos.participacionEquitativa(procesos, sim);
                 default -> throw new AssertionError();
             }
 
@@ -200,7 +200,27 @@ public class Planificador {
                            "%n  • Procesos terminados: %s" +
                            "%n  • Procesos que nunca se ejecutaron: %s" +
                            "%n  • Procesos en ejecución: %s" + 
-                           "%n  • Cambios de proceso registrados: %s", (terminados.isEmpty() ? "Ninguno" : terminados.substring(0, terminados.length() - 2)), (noEjecutados.isEmpty() ? "Ninguno" : noEjecutados.substring(0, noEjecutados.length() - 2)), (enEjecucion.isEmpty() ? "Ninguno" : enEjecucion.substring(0, enEjecucion.length() - 2)), pila.size());
+                           "%n  • Cambios de proceso registrados: %s%n", (terminados.isEmpty() ? "Ninguno" : terminados.substring(0, terminados.length() - 2)), (noEjecutados.isEmpty() ? "Ninguno" : noEjecutados.substring(0, noEjecutados.length() - 2)), (enEjecucion.isEmpty() ? "Ninguno" : enEjecucion.substring(0, enEjecucion.length() - 2)), pila.size());
+    }
 
+    public static int asignarCPU(int simulacion, int quantum, Proceso p) {
+        if (p.getEstado().equals("Listo")) {
+            if (rd.nextInt(2) == 1) {
+                return Math.min(Math.min(simulacion, quantum), p.getTiempoRestante());
+            }
+            else {
+                p.setEstado("Bloqueado");
+                return rd.nextInt(Math.min(Math.min(simulacion, quantum), p.getTiempoRestante()));
+            }
+        }
+        
+        if (rd.nextInt(2) == 1) 
+            if (rd.nextInt(2) == 1) {
+                p.setEstado("Listo");
+                return Math.min(Math.min(simulacion, quantum), p.getTiempoRestante());
+            } else 
+                return rd.nextInt(Math.min(Math.min(simulacion, quantum), p.getTiempoRestante()));
+
+        return 0;
     }
 }
