@@ -98,6 +98,7 @@ public class Algoritmos {
 
     public static void roundRobin(ArrayList<Proceso> procesos, int sim, int quantum) {
 
+        System.out.println(procesos);
         System.out.println("\nTabla inicial de procesos:");
         Planificador.pcb(procesos);
 
