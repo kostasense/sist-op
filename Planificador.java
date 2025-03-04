@@ -44,7 +44,7 @@ public class Planificador {
                 //case 4 -> ClaseAlgoritmo.main(procesos);
                 //case 5 -> ClaseAlgoritmo.main(procesos);
                 //case 6 -> ClaseAlgoritmo.main(procesos);
-                //case 7 -> ClaseAlgoritmo.main(procesos);
+                case "7" -> Algoritmos.planificacionGarantizada(procesos, sim);
                 //case 8 -> ClaseAlgoritmo.main(procesos);
                 //case 9 -> ClaseAlgoritmo.main(procesos);
                 case "10" -> Algoritmos.participacionEquitativa(procesos, sim);
@@ -74,7 +74,7 @@ public class Planificador {
         algoritmos.put("4", new Pair<String, String>("Prioridades", "No apropiativa"));
         algoritmos.put("5", new Pair<String, String>("Múltiples Colas de Prioridad", ""));
         algoritmos.put("6", new Pair<String, String>("Proceso Más Corto Primero", ""));
-        algoritmos.put("7", new Pair<String, String>("Planificación Garantizada", ""));
+        algoritmos.put("7", new Pair<String, String>("Planificación Garantizada", "Apropiativo"));
         algoritmos.put("8", new Pair<String, String>("Boletos de Lotería", "Apropiativa"));
         algoritmos.put("9", new Pair<String, String>("Boletos de Lotería", "No apropiativa"));
         algoritmos.put("10", new Pair<String, String>("Participación Equitativa", ""));
@@ -103,7 +103,7 @@ public class Planificador {
                             ├────────────────────────────────────────┤
                             │ 9. Boletos de Lotería [No-Apropiativo] │
                             ├────────────────────────────────────────┤
-                            │ 10. Paticipación Equitativa            │
+                            │ 10. Participación Equitativa           │
                             ├────────────────────────────────────────┤
                             │ F. Finalizar                           │
                             └────────────────────────────────────────┘

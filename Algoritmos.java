@@ -3,6 +3,49 @@ import java.util.*;
 public class Algoritmos {
     static Random rd = new Random();
 
+    public static void planificacionGarantizada(ArrayList<Proceso> procesos, int simulacion) {
+        Stack<Proceso> pila = new Stack<>(); 
+
+        int i = 0;
+
+        System.out.println("\nTabla inicial de procesos:");
+        Planificador.pcb(procesos);
+
+        while (simulacion > 0 && procesos.size() > 0) {
+            Proceso p = procesos.get(i++);
+
+            if (!p.getEstado().equals("Terminado")) {
+                int tiempo = Planificador.asignarCPU(simulacion,  simulacion / procesos.size(), p);
+                System.out.println("Quantum: " +  simulacion / procesos.size());
+                
+                simulacion -= tiempo;
+                p.setTiempoRestante((p.getTiempoRestante() - tiempo));
+
+                try {
+                    if (tiempo != 0 && pila.peek().getIdProceso() != p.getIdProceso()) 
+                        pila.push(p);
+                } catch (Exception e) {
+                    pila.push(p);
+                }
+
+    
+                if (p.getTiempoRestante() == 0) {
+                    procesos.remove(i - 1);
+                }
+                
+                System.out.println("\nSimulación restante: " + simulacion);
+                Planificador.pcb(procesos);
+                System.out.printf(" • Proceso %d: Ejecuta %d unidades. %n • Estado: %s%n%n", p.getIdProceso(), tiempo, p.getEstado());
+                //System.out.println("Simulación restante: " + simulacion);
+            }
+
+            if (i == procesos.size()) 
+                i = 0;
+        }
+
+        Planificador.informe(procesos, pila);
+    }
+
     public static void participacionEquitativa(ArrayList<Proceso> procesos, int simulacion) {
         
         Stack<Proceso> pila = new Stack<>(); 
