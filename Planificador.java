@@ -125,7 +125,12 @@ public class Planificador {
                     nombrePropiedades.add(nombre);
                 }
             } catch (Exception e) {
-                System.out.println(e.getStackTrace());
+                System.out.println("""
+                                ╔═══════════════════════════════════╗
+                                ║ Todos los procesos han terminado. ║
+                                ╚═══════════════════════════════════╝
+                                  """);
+                return;
             }
         }
 
@@ -160,7 +165,7 @@ public class Planificador {
                 try {
                     System.out.printf("║ %-" + t +"s ", propiedades.get(i).get(p));
                 } catch (Exception e) {
-                    System.out.println(e.getStackTrace());
+                    System.out.println(e);
                 }
             }
 
@@ -184,15 +189,18 @@ public class Planificador {
         return campo.replaceAll("([a-z])([A-Z])", "$1 $2").toUpperCase();
     }
 
-    public static void informe(Collection<Proceso> procesos, Stack<Proceso> pila) {
+    public static void informe(Collection<Proceso> procesos, ArrayList<Integer> terminadosLista, Stack<Proceso> pila) {
         String terminados = "";
         String noEjecutados = "";
         String enEjecucion = "";
 
-        for(Proceso p : procesos) {
-            if (p.getEstado().equals("Terminado")) terminados += p.getIdProceso() + ", ";
+        for (Proceso p : procesos) {
             if (!pila.contains(p)) noEjecutados += p.getIdProceso() + ", ";
-            if (pila.contains(p) && p.getTiempoRestante() != 0) enEjecucion += p.getIdProceso() + ", ";
+            if (pila.contains(p)) enEjecucion += p.getIdProceso() + ", ";
+        }
+        
+        for (Integer id : terminadosLista) {
+            terminados += id + ", ";
         }
 
         System.out.printf("%nInforme final:" +

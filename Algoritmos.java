@@ -3,69 +3,41 @@ import java.util.*;
 public class Algoritmos {
     static Random rd = new Random();
 
+    public static void loteriaApropiativa(ArrayList<Proceso> procesos, int simulacion, int quantum) {
+        Stack<Proceso> pila = new Stack<>(); 
+        ArrayList<Integer> terminados = new ArrayList<>();
+
+
+        int i = 0;
+
+        for(Proceso p : procesos) {
+            
+        }
+
+        while (simulacion > 0 && !procesos.isEmpty()) {
+
+        }
+    }
+
+    /*public static int[] generarLoteria() {
+        int[] loteria = new int[20];
+    }*/
+
     public static void planificacionGarantizada(ArrayList<Proceso> procesos, int simulacion) {
         Stack<Proceso> pila = new Stack<>(); 
+        ArrayList<Integer> terminados = new ArrayList<>();
 
         int i = 0;
 
         System.out.println("\nTabla inicial de procesos:");
         Planificador.pcb(procesos);
 
-        while (simulacion > 0 && procesos.size() > 0) {
-            Proceso p = procesos.get(i++);
+        while (simulacion > 0 && !procesos.isEmpty()) {
+            Proceso p = procesos.get(i);
 
-            if (!p.getEstado().equals("Terminado")) {
-                int tiempo = Planificador.asignarCPU(simulacion,  simulacion / procesos.size(), p);
-                System.out.println("Quantum: " +  simulacion / procesos.size());
-                
-                simulacion -= tiempo;
-                p.setTiempoRestante((p.getTiempoRestante() - tiempo));
-
-                try {
-                    if (tiempo != 0 && pila.peek().getIdProceso() != p.getIdProceso()) 
-                        pila.push(p);
-                } catch (Exception e) {
-                    pila.push(p);
-                }
-
-    
-                if (p.getTiempoRestante() == 0) {
-                    procesos.remove(i - 1);
-                }
-                
-                System.out.println("\nSimulación restante: " + simulacion);
-                Planificador.pcb(procesos);
-                System.out.printf(" • Proceso %d: Ejecuta %d unidades. %n • Estado: %s%n%n", p.getIdProceso(), tiempo, p.getEstado());
-                //System.out.println("Simulación restante: " + simulacion);
-            }
-
-            if (i == procesos.size()) 
-                i = 0;
-        }
-
-        Planificador.informe(procesos, pila);
-    }
-
-    public static void participacionEquitativa(ArrayList<Proceso> procesos, int simulacion) {
-        
-        Stack<Proceso> pila = new Stack<>(); 
-        int numUsuarios = rd.nextInt(Math.min(5, procesos.size())) + 1; // Ehhhhhh todavia no hace lo que quiero.
-
-        for(Proceso p : procesos)
-            p.setUsuario(rd.nextInt(numUsuarios) + 1);
-
-        int quantum = simulacion / numUsuarios, i = 0, terminados = 0;
-
-        System.out.printf("  • Quantum: %d%n", quantum);
-        System.out.println("\nTabla inicial de procesos:");
-        Planificador.pcb(procesos);
-
-        while (simulacion > 0 && terminados < procesos.size()) {
-            Proceso p = procesos.get(i++);
-
-            if (!p.getEstado().equals("Terminado")) {
-                int tiempo = Planificador.asignarCPU(simulacion, quantum, p);
-                //System.out.println("Quantum: " + quantum);
+            //if (!p.getEstado().equals("Terminado")) {
+            int quantum = Math.max(simulacion / procesos.size(), 1);
+                int tiempo = Planificador.asignarCPU(simulacion,  quantum, p);
                 
                 simulacion -= tiempo;
                 p.setTiempoRestante((p.getTiempoRestante() - tiempo));
@@ -80,25 +52,84 @@ public class Algoritmos {
     
                 if (p.getTiempoRestante() == 0) {
                     p.setEstado("Terminado");
-                    terminados++;
+                    terminados.add(p.getIdProceso());
+                    procesos.remove(i);
+                } else {
+                    i++;
                 }
                 
-                System.out.println("\nSimulación restante: " + simulacion);
-                Planificador.pcb(procesos);
-                System.out.printf(" • Proceso %d: Ejecuta %d unidades. %n • Estado: %s%n%n", p.getIdProceso(), tiempo, p.getEstado());
-                //System.out.println("Simulación restante: " + simulacion);
-            }
+                System.out.printf("%n%n • Proceso %d: Ejecuta %d unidades. %n • Estado: %s. %n • Simulación restante: %d unidades. %n • Quantum: %d%n", p.getIdProceso(), tiempo, p.getEstado(), simulacion, quantum);
+                Planificador.pcb(procesos);   
+            //}
 
             if (i == procesos.size()) 
                 i = 0;
         }
 
-        Planificador.informe(procesos, pila);
+        Planificador.informe(procesos, terminados, pila);
     }
+
+    /*public static void participacionEquitativa(ArrayList<Proceso> procesos, int simulacion) {
+        Stack<Proceso> pila = new Stack<>(); 
+        ArrayList<Integer> terminados = new ArrayList<>();
+        int [] procesosPorUsuario = new int[5];
+
+        int numUsuarios = Math.min(procesos.size(), 4);
+
+        for(Proceso p : procesos) {
+            int usuario = rd.nextInt(numUsuarios) + 1;
+            p.setUsuario(usuario);
+            procesosPorUsuario[usuario]++;
+        }
+
+        System.out.println("\nTabla inicial de procesos:");
+        Planificador.pcb(procesos);
+
+        //int porUsuario = simulacion / activos.size();
+        int i = 0;
+
+        while (simulacion > 0 && !procesos.isEmpty()) {
+            Proceso p = procesos.get(i);
+
+            //int quantum = porUsuario / procesosPorUsuario[p.getUsuario()];
+            int tiempo = Planificador.asignarCPU(simulacion, quantum, p);
+
+            simulacion -= tiempo;
+            p.setTiempoRestante((p.getTiempoRestante() - tiempo));
+            
+            try {
+                if (tiempo != 0 && pila.peek().getIdProceso() != p.getIdProceso()) 
+                    pila.push(p);
+            } catch (Exception e) {
+                pila.push(p);
+            }
+
+            if (p.getTiempoRestante() == 0) {
+                p.setEstado("Terminado");
+                terminados.add(p.getIdProceso());
+                procesos.remove(i);
+                procesosPorUsuario[p.getUsuario()]--;
+
+                /*if (procesosPorUsuario[p.getUsuario()] == 0) {
+                    activos.remove(Integer.valueOf(p.getUsuario()));
+                    porUsuario = simulacion / activos.size();
+                }
+            } else {
+                i++;
+            }
+
+            System.out.printf("%n%n • Proceso %d: Ejecuta %d unidades. %n • Estado: %s. %n • Simulación restante: %d unidades. %n • Quantum: %d%n", p.getIdProceso(), tiempo, p.getEstado(), simulacion, quantum);
+            Planificador.pcb(procesos);   
+
+            if (i == procesos.size()) 
+                i = 0;
+        }
+
+        Planificador.informe(procesos, terminados, pila);
+    }*/
 
     public static void roundRobin(ArrayList<Proceso> procesos, int sim, int quantum) {
 
-        System.out.println(procesos);
         System.out.println("\nTabla inicial de procesos:");
         Planificador.pcb(procesos);
 
@@ -132,9 +163,8 @@ public class Algoritmos {
                     terminados++;
                 }
 
-                System.out.println("\nSimulación restante: " + sim);
+                System.out.printf("%n%n • Proceso %d: Ejecuta %d unidades. %n • Estado: %s. %n • Simulación restante: %d%n", p.getIdProceso(), exe, p.getEstado(), sim);
                 Planificador.pcb(procesos);
-                System.out.printf(" • Proceso %d: Ejecuta %d unidades. %n • Estado: %s%n%n", p.getIdProceso(), exe, p.getEstado());
             }
 
             if (cont == (procesos.size() - 1)) {
@@ -142,6 +172,6 @@ public class Algoritmos {
             }
         }
 
-        Planificador.informe(procesos, pila);
+        //Planificador.informe(procesos, pila);
     }
 }
