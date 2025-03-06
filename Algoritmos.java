@@ -128,17 +128,17 @@ public class Algoritmos {
         Planificador.informe(procesos, terminados, pila);
     }*/
 
-    public static void roundRobin(ArrayList<Proceso> procesos, int sim, int quantum) {
+    public static void roundRobinA(ArrayList<Proceso> procesos, int sim, int quantum) {
 
         System.out.println("\nTabla inicial de procesos:");
         Planificador.pcb(procesos);
 
         Stack<Proceso> pila = new Stack<>();
-        int terminados = 0;
+        ArrayList<Integer> terminados = new ArrayList<>();
 
         for (int cont = 0; cont < procesos.size(); cont++) {
 
-            if (sim <= 0 || terminados == procesos.size()) {
+            if (sim <= 0 || terminados.size() == procesos.size()) {
                 break;
             }
 
@@ -160,7 +160,7 @@ public class Algoritmos {
 
                 if (p.getTiempoRestante() <= 0) {
                     p.setEstado("Terminado");
-                    terminados++;
+                    terminados.add(p.getIdProceso());
                 }
 
                 System.out.printf("%n%n • Proceso %d: Ejecuta %d unidades. %n • Estado: %s. %n • Simulación restante: %d%n", p.getIdProceso(), exe, p.getEstado(), sim);
@@ -172,6 +172,65 @@ public class Algoritmos {
             }
         }
 
-        //Planificador.informe(procesos, pila);
+        Planificador.informe(procesos, terminados, pila);
+    }
+
+    public static void roundRobinNA(ArrayList<Proceso> procesos, int sim) {
+
+        System.out.println("\nTabla inicial de procesos:");
+        Planificador.pcb(procesos);
+
+        Stack<Proceso> pila = new Stack<>();
+        ArrayList<Integer> terminados = new ArrayList<>();
+
+        for (int cont = 0; cont < procesos.size(); cont++) {
+
+            if (sim <= 0 || terminados.size() == procesos.size()) {
+                break;
+            }
+
+            Proceso p = procesos.get(cont);
+
+            if (!p.getEstado().equals("Terminado")) {
+
+                int tiempoRestante = p.getTiempoRestante();
+
+                int exe = Planificador.asignarCPUNoApropiativo(sim, p);
+
+                if (p.getTiempoRestante() != tiempoRestante || exe == 0) {
+
+                    sim -= exe;
+
+                    try {
+                        if (exe != 0 && pila.peek().getIdProceso() != p.getIdProceso()) 
+                            pila.push(p);
+                    } catch (Exception e) {
+                        pila.push(p);
+                    }
+
+                    if (p.getTiempoRestante() <= 0) {
+                        p.setEstado("Terminado");
+                        terminados.add(p.getIdProceso());
+                    } else {
+                        cont = cont - 1;
+                    }
+
+                    System.out.printf("%n%n • Proceso %d: Ejecuta %d unidades. %n • Estado: %s. %n • Simulación restante: %d%n", p.getIdProceso(), exe, p.getEstado(), sim);
+                    Planificador.pcb(procesos);
+                }
+
+                if (sim == exe && (p.getTiempoRestante() == tiempoRestante)) {
+
+                    System.out.printf("%n%n • Proceso %d: Ejecuta %d unidades. %n • Estado: %s. %n • Simulación restante: %d%n", p.getIdProceso(), 0, p.getEstado(), sim);
+                    Planificador.pcb(procesos);
+
+                    System.out.println("MUERTE POR INANICION");
+                    Planificador.informe(procesos, terminados, pila);
+                    return;
+                }
+            }
+        }
+
+        Planificador.informe(procesos, terminados, pila);
     }
 }
