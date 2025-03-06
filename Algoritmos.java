@@ -224,7 +224,11 @@ public class Algoritmos {
                     System.out.printf("%n%n • Proceso %d: Ejecuta %d unidades. %n • Estado: %s. %n • Simulación restante: %d%n", p.getIdProceso(), 0, p.getEstado(), sim);
                     Planificador.pcb(procesos);
 
-                    System.out.println("MUERTE POR INANICION");
+                    System.out.println("""
+                                ╔═══════════════════════════════════╗
+                                ║ MUERTE POR INANICION.             ║
+                                ╚═══════════════════════════════════╝
+                                  """);
                     Planificador.informe(procesos, terminados, pila);
                     return;
                 }
