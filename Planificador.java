@@ -38,8 +38,8 @@ public class Planificador {
             generarProcesos(procesos);
 
             switch (opcion) {
-                case "1" -> Algoritmos.roundRobin(procesos, sim, quantum);
-                //case 2 -> ClaseAlgoritmo.main(procesos);
+                case "1" -> Algoritmos.roundRobinA(procesos, sim, quantum);
+                case "2" -> Algoritmos.roundRobinNA(procesos, sim);
                 //case 3 -> ClaseAlgoritmo.main(procesos);
                 //case 4 -> ClaseAlgoritmo.main(procesos);
                 //case 5 -> ClaseAlgoritmo.main(procesos);
@@ -47,7 +47,7 @@ public class Planificador {
                 case "7" -> Algoritmos.planificacionGarantizada(procesos, sim);
                 //case 8 -> ClaseAlgoritmo.main(procesos);
                 //case 9 -> ClaseAlgoritmo.main(procesos);
-                case "10" -> Algoritmos.participacionEquitativa(procesos, sim);
+                //case "10" -> Algoritmos.participacionEquitativa(procesos, sim);
                 default -> throw new AssertionError();
             }
 
@@ -228,6 +228,42 @@ public class Planificador {
             } else 
                 return rd.nextInt(Math.min(Math.min(simulacion, quantum), p.getTiempoRestante()));
 
+        return 0;
+    }
+    
+    public static int asignarCPUNoApropiativo(int sim, Proceso p) {
+        if (p.getEstado().equals("Listo")) {
+            if (rd.nextInt(2) == 0) {
+                int exe = Math.min(sim, p.getTiempoRestante());
+                p.setTiempoRestante(p.getTiempoRestante() - exe);
+                return exe;
+            } else {
+                p.setEstado("Bloqueado");
+                int exe = rd.nextInt(Math.min(sim, p.getTiempoRestante()));
+                p.setTiempoRestante(p.getTiempoRestante() - exe);
+                return exe;
+            }
+        }
+    
+        if (p.getEstado().equals("Bloqueado")) {
+            for (int i = 0; i < 3; i++) {
+                if (rd.nextInt(2) == 0) { 
+                    p.setEstado("Listo");
+                    if (rd.nextInt(2) == 0) {
+                        int exe = Math.min(sim, p.getTiempoRestante());
+                        p.setTiempoRestante(p.getTiempoRestante() - exe);
+                        return exe;
+                    } else {
+                        p.setEstado("Bloqueado");
+                        int exe = rd.nextInt(Math.min(sim, p.getTiempoRestante()));
+                        p.setTiempoRestante(p.getTiempoRestante() - exe);
+                        return exe;
+                    }
+                }
+            }
+            return sim;
+        }
+    
         return 0;
     }
 }
