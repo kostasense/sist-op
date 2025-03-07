@@ -54,7 +54,7 @@ public class Algoritmos {
 
                 if (p.getTiempoRestante() == tiempoRestante && simulacion == tiempoEjecucion) {
                     System.out.printf("%n%n • Proceso %d: %s %n • Estado: %s. %n • Simulación restante: %d unidades. %n", p.getIdProceso(), 
-                                     (unidadesAcumuladas == 0 ? "No se ejecuta." : String.format("Ejecuto %d unidades antes de muerte por inanición.", unidadesAcumuladas)), p.getEstado(), simulacion);
+                                     "No se ejecuta.", p.getEstado(), simulacion);
                     System.out.println("""
                                         ╔═══════════════════════════════════╗
                                         ║ MUERTE POR INANICION.             ║
@@ -371,7 +371,7 @@ public class Algoritmos {
 
                 if (sim == exe && (p.getTiempoRestante() == tiempoRestante)) {
                     System.out.printf("%n%n • Proceso %d: %s %n • Estado: %s. %n • Simulación restante: %d unidades. %n", 
-                                      p.getIdProceso(), (exe == 0 ? "No se ejecuta." : String.format("Ejecuta %d unidades.", exe)), p.getEstado(), sim);                    
+                                      p.getIdProceso(), "No se ejecuta.", p.getEstado(), sim);                    
                     Planificador.pcb(procesos);
 
                     System.out.println("""
