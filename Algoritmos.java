@@ -46,7 +46,7 @@ public class Algoritmos {
                 boletoGanador = loteria[rd.nextInt(loteria.length)];
 
             Proceso p = boletoPorProceso.get(boletoGanador);
-            int tiempoRestante = 0, tiempoEjecucion = 0, unidadesAcumuladas = 0;
+            int tiempoRestante = 0, tiempoEjecucion = 0;
 
             do {
                 tiempoRestante = p.getTiempoRestante();
@@ -65,7 +65,7 @@ public class Algoritmos {
                     return;
                 }
 
-                unidadesAcumuladas += tiempoEjecucion;
+                simulacion -= tiempoEjecucion;
 
                 if (p.getTiempoRestante() == 0) {
                     p.setEstado("Terminado");
@@ -83,7 +83,7 @@ public class Algoritmos {
                 } catch (Exception e) {
                     pila.push(p);
                 } 
-            } while (p.getTiempoRestante() != 0);
+            } while (p.getTiempoRestante() != 0 && simulacion > 0);
 
             Iterator<Map.Entry<Integer, Proceso>> iter = boletoPorProceso.entrySet().iterator();
             while (iter.hasNext()) {
