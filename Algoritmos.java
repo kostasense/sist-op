@@ -3,6 +3,98 @@ import java.util.*;
 public class Algoritmos {
     static Random rd = new Random();
 
+    public static void loteriaNoApropiativa(ArrayList<Proceso> procesos, int simulacion) {
+        Stack<Proceso> pila = new Stack<>(); 
+        ArrayList<Integer> terminados = new ArrayList<>();
+        HashMap<Integer, Proceso> boletoPorProceso = new HashMap<>();
+        int [] boletosPorPrioridad = {0, 8, 6, 4, 2};
+        int [] loteria = new int[101];
+
+        int boletoActual = 1;
+
+        for(Proceso p : procesos) {
+            int prioridad = rd.nextInt(4) + 1;
+            p.setPrioridad(prioridad);
+
+            ArrayList<Integer> boletosProceso = new ArrayList<>();
+            for(int i = 0; i < boletosPorPrioridad[prioridad]; i++) {
+                boletosProceso.add(boletoActual);
+                boletoPorProceso.put(boletoActual, p);
+                boletoActual++;
+            }
+            p.setBoleto(boletosProceso);
+        }
+
+        for(int i = 0; i < loteria.length; i++) {
+            loteria[i] = i + 1;
+        }
+
+        for(int i = loteria.length - 1; i > 0; i--) {
+            int j = rd.nextInt(i + 1);
+            int temp = loteria[i];
+            loteria[i] = loteria[j];
+            loteria[j] = temp;
+        }
+
+        System.out.println("\nTabla inicial de procesos:");
+        Planificador.pcb(procesos);
+
+        while (simulacion > 0 && !procesos.isEmpty()) {
+            int boletoGanador = loteria[rd.nextInt(loteria.length)];
+
+            while (!boletoPorProceso.containsKey(boletoGanador))
+                boletoGanador = loteria[rd.nextInt(loteria.length)];
+
+            Proceso p = boletoPorProceso.get(boletoGanador);
+            int tiempoRestante = 0, tiempoEjecucion = 0, unidadesAcumuladas = 0;
+
+            do {
+                tiempoRestante = p.getTiempoRestante();
+                tiempoEjecucion = Planificador.asignarCPUNoApropiativo(simulacion, p);   
+
+                if (p.getTiempoRestante() == tiempoRestante && simulacion == tiempoEjecucion) {
+                    System.out.printf("%n%n • Proceso %d: %s %n • Estado: %s. %n • Simulación restante: %d unidades. %n", p.getIdProceso(), 
+                                     (unidadesAcumuladas == 0 ? "No se ejecuta." : String.format("Ejecuto %d unidades antes de muerte por inanición.", unidadesAcumuladas)), p.getEstado(), simulacion);
+                    System.out.println("""
+                                        ╔═══════════════════════════════════╗
+                                        ║ MUERTE POR INANICION.             ║
+                                        ╚═══════════════════════════════════╝
+                                       """);
+
+                    Planificador.informe(procesos, terminados, pila);
+                    return;
+                }
+
+                unidadesAcumuladas += tiempoEjecucion;
+
+                if (p.getTiempoRestante() == 0) {
+                    p.setEstado("Terminado");
+                    terminados.add(p.getIdProceso());
+                    procesos.remove(p);
+                }
+
+                System.out.printf("%n%n • Proceso %d: %s %n • Estado: %s. %n • Simulación restante: %d unidades. %n", p.getIdProceso(), 
+                                (tiempoEjecucion == 0 ? "No se ejecuta." : String.format("Ejecuta %d unidades.", tiempoEjecucion)), p.getEstado(), simulacion);
+                Planificador.pcb(procesos);
+
+                try {
+                    if (tiempoEjecucion != 0 && pila.peek().getIdProceso() != p.getIdProceso()) 
+                        pila.push(p);
+                } catch (Exception e) {
+                    pila.push(p);
+                } 
+            } while (p.getTiempoRestante() != 0);
+
+            Iterator<Map.Entry<Integer, Proceso>> iter = boletoPorProceso.entrySet().iterator();
+            while (iter.hasNext()) {
+                Map.Entry<Integer, Proceso> boleto = iter.next();
+                if (boleto.getValue().getTiempoRestante() == 0) iter.remove();
+            }
+        }
+
+        Planificador.informe(procesos, terminados, pila);
+    }
+
     public static void loteriaApropiativa(ArrayList<Proceso> procesos, int simulacion, int quantum) {
         Stack<Proceso> pila = new Stack<>(); 
         ArrayList<Integer> terminados = new ArrayList<>();
@@ -39,7 +131,6 @@ public class Algoritmos {
         System.out.println("\nTabla inicial de procesos:");
         Planificador.pcb(procesos);
 
-        int i = 0;
         while (simulacion > 0 && !procesos.isEmpty()) {
             int boletoGanador = loteria[rd.nextInt(loteria.length)];
 
@@ -62,22 +153,18 @@ public class Algoritmos {
             if (p.getTiempoRestante() == 0) {
                 p.setEstado("Terminado");
                 terminados.add(p.getIdProceso());
-                procesos.remove(i);
+                procesos.remove(p);
 
                 Iterator<Map.Entry<Integer, Proceso>> iter = boletoPorProceso.entrySet().iterator();
                 while (iter.hasNext()) {
                     Map.Entry<Integer, Proceso> boleto = iter.next();
                     if (boleto.getValue().getTiempoRestante() == 0) iter.remove();
                 }
-            } else {
-                i++;
             }
 
-            System.out.printf("%n%n • Proceso %d: Ejecuta %d unidades. %n • Estado: %s. %n • Simulación restante: %d unidades. %n", p.getIdProceso(), tiempo, p.getEstado(), simulacion);
+            System.out.printf("%n%n • Proceso %d: %s %n • Estado: %s. %n • Simulación restante: %d unidades. %n", p.getIdProceso(), 
+                            (tiempo == 0 ? "No se ejecuta." : String.format("Ejecuta %d unidades.", tiempo)), p.getEstado(), simulacion);
             Planificador.pcb(procesos);  
-
-            if (i == procesos.size()) 
-                i = 0;
         }
 
         Planificador.informe(procesos, terminados, pila);
@@ -116,7 +203,8 @@ public class Algoritmos {
                 i++;
             }
 
-            System.out.printf("%n%n • Proceso %d: Ejecuta %d unidades. %n • Estado: %s. %n • Simulación restante: %d unidades. %n", p.getIdProceso(), tiempo, p.getEstado(), simulacion);
+            System.out.printf("%n%n • Proceso %d: %s %n • Estado: %s. %n • Simulación restante: %d unidades. %n", p.getIdProceso(), 
+                            (tiempo == 0 ? "No se ejecuta." : String.format("Ejecuta %d unidades.", tiempo)), p.getEstado(), simulacion);
             Planificador.pcb(procesos);  
 
             if (i == procesos.size()) 

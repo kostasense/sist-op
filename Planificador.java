@@ -46,7 +46,7 @@ public class Planificador {
                 //case 6 -> ClaseAlgoritmo.main(procesos);
                 case "7" -> Algoritmos.planificacionGarantizada(procesos, sim);
                 case "8" -> Algoritmos.loteriaApropiativa(procesos, sim, quantum);
-                //case 9 -> ClaseAlgoritmo.main(procesos);
+                case "9" -> Algoritmos.loteriaNoApropiativa(procesos, sim);
                 case "10" -> Algoritmos.participacionEquitativa(procesos, sim);
                 default -> throw new AssertionError();
             }
