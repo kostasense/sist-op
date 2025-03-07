@@ -45,7 +45,7 @@ public class Planificador {
                 //case 5 -> ClaseAlgoritmo.main(procesos);
                 //case 6 -> ClaseAlgoritmo.main(procesos);
                 case "7" -> Algoritmos.planificacionGarantizada(procesos, sim);
-                //case 8 -> ClaseAlgoritmo.main(procesos);
+                case "8" -> Algoritmos.loteriaApropiativa(procesos, sim, quantum);
                 //case 9 -> ClaseAlgoritmo.main(procesos);
                 case "10" -> Algoritmos.participacionEquitativa(procesos, sim);
                 default -> throw new AssertionError();
@@ -122,7 +122,7 @@ public class Planificador {
                 if (c.get(procesos.toArray()[0]) != null) {
                     propiedades.add(c);
                     String nombre = modificarCadena(c.getName());
-                    nombrePropiedades.add(nombre);
+                    nombrePropiedades.add((nombre.equals("BOLETOS") ? String.format("%-30s", nombre) : nombre));
                 }
             } catch (Exception e) {
                 System.out.println("""
