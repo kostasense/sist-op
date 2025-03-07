@@ -47,7 +47,7 @@ public class Planificador {
                 case "7" -> Algoritmos.planificacionGarantizada(procesos, sim);
                 //case 8 -> ClaseAlgoritmo.main(procesos);
                 //case 9 -> ClaseAlgoritmo.main(procesos);
-                //case "10" -> Algoritmos.participacionEquitativa(procesos, sim);
+                case "10" -> Algoritmos.participacionEquitativa(procesos, sim);
                 default -> throw new AssertionError();
             }
 
