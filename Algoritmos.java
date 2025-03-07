@@ -313,6 +313,12 @@ public class Algoritmos {
 
                 System.out.printf("%n%n • Proceso %d: %s %n • Estado: %s. %n • Simulación restante: %d unidades. %n", 
                                   p.getIdProceso(), (exe == 0 ? "No se ejecuta." : String.format("Ejecuta %d unidades.", exe)), p.getEstado(), sim);
+                
+                if (p.getEstado().equals("Terminado")) {
+                    procesos.remove(cont);
+                    cont = cont - 1;
+                }
+
                 Planificador.pcb(procesos);
             }
 
@@ -365,7 +371,13 @@ public class Algoritmos {
                     }
 
                     System.out.printf("%n%n • Proceso %d: %s %n • Estado: %s. %n • Simulación restante: %d unidades. %n", 
-                                      p.getIdProceso(), (exe == 0 ? "No se ejecuta." : String.format("Ejecuta %d unidades.", exe)), p.getEstado(), sim);                      
+                                      p.getIdProceso(), (exe == 0 ? "No se ejecuta." : String.format("Ejecuta %d unidades.", exe)), p.getEstado(), sim); 
+                                      
+                    if (p.getEstado().equals("Terminado")) {
+                        procesos.remove(cont);
+                        cont = cont - 1;
+                    }
+                    
                     Planificador.pcb(procesos);
                 }
 
