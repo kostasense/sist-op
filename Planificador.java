@@ -40,10 +40,10 @@ public class Planificador {
             switch (opcion) {
                 case "1" -> Algoritmos.roundRobinA(procesos, sim, quantum);
                 case "2" -> Algoritmos.roundRobinNA(procesos, sim);
-                //case 3 -> ClaseAlgoritmo.main(procesos);
-                //case 4 -> ClaseAlgoritmo.main(procesos);
+                case "3" -> Algoritmos.prioridadA(procesos, sim, quantum);
+                case "4" -> Algoritmos.prioridadNA(procesos, sim);
                 case "5" -> Algoritmos.multiplesColas(procesos, sim);
-                //case 6 -> ClaseAlgoritmo.main(procesos);
+                case "6" -> Algoritmos.masCortoPrimero(procesos, sim, quantum);
                 case "7" -> Algoritmos.planificacionGarantizada(procesos, sim);
                 case "8" -> Algoritmos.loteriaApropiativa(procesos, sim, quantum);
                 case "9" -> Algoritmos.loteriaNoApropiativa(procesos, sim);
