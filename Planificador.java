@@ -28,7 +28,7 @@ public class Planificador {
             int sim = rd.nextInt(15) + 20; 
             int quantum = rd.nextInt(6) + 5; 
             System.out.printf("%nSelección de parámetros:%n" + 
-                              "  %s%n  %s%n  %s" + (algoritmos.get(opcion).second().equals("Apropiativa") ? (!opcion.equals("10") || !opcion.equals("7") ? "%n  %s%n" : "") : "%n"), 
+                              "  %s%n  %s%n  %s" + (algoritmos.get(opcion).second().equals("Apropiativa") ? (!opcion.equals("10") || !opcion.equals("7") ? "%n  %s%n" : "") : "%n"),
                               "• Tipo de Planificación: " + algoritmos.get(opcion).second(), 
                               "• Algoritmo: " + algoritmos.get(opcion).first(), 
                               "• Tiempo de simulación: " + sim + " unidades", 
@@ -42,7 +42,7 @@ public class Planificador {
                 case "2" -> Algoritmos.roundRobinNA(procesos, sim);
                 //case 3 -> ClaseAlgoritmo.main(procesos);
                 //case 4 -> ClaseAlgoritmo.main(procesos);
-                //case 5 -> ClaseAlgoritmo.main(procesos);
+                case "5" -> Algoritmos.multiplesColas(procesos, sim);
                 //case 6 -> ClaseAlgoritmo.main(procesos);
                 case "7" -> Algoritmos.planificacionGarantizada(procesos, sim);
                 case "8" -> Algoritmos.loteriaApropiativa(procesos, sim, quantum);
@@ -72,9 +72,9 @@ public class Planificador {
         algoritmos.put("2", new Pair<String, String>("Round-Robin", "No apropiativa"));
         algoritmos.put("3", new Pair<String, String>("Prioridades", "Apropiativa"));
         algoritmos.put("4", new Pair<String, String>("Prioridades", "No apropiativa"));
-        algoritmos.put("5", new Pair<String, String>("Múltiples Colas de Prioridad", ""));
+        algoritmos.put("5", new Pair<String, String>("Múltiples Colas de Prioridad", "No apropiativa"));
         algoritmos.put("6", new Pair<String, String>("Proceso Más Corto Primero", ""));
-        algoritmos.put("7", new Pair<String, String>("Planificación Garantizada", "Apropiativo"));
+        algoritmos.put("7", new Pair<String, String>("Planificación Garantizada", "Apropiativa"));
         algoritmos.put("8", new Pair<String, String>("Boletos de Lotería", "Apropiativa"));
         algoritmos.put("9", new Pair<String, String>("Boletos de Lotería", "No apropiativa"));
         algoritmos.put("10", new Pair<String, String>("Participación Equitativa", ""));

@@ -69,7 +69,7 @@ public class Proceso {
                 ", tiempoRestante=" + tiempoRestante +
                 ", estado='" + estado + '\'' +
                 ", prioridad=" + prioridad +
-                ", boleto=" + boletos.toString() +
+                ", boleto=" + (boletos != null ? boletos.toString() : boletos) +
                 ", usuario=" + usuario +
                 '}';
     }
