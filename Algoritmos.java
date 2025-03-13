@@ -177,7 +177,7 @@ public class Algoritmos {
         int i = 0;
         int quantum = simulacion / procesos.size();
 
-        System.out.printf("  %s%n", "• Quantum: " + quantum);
+        System.out.printf("%n  %s%n", "• Tiempo asignado a cada proceso: %d unidades.", quantum);
         System.out.println("\nTabla inicial de procesos:");
         Planificador.pcb(procesos);
 
@@ -231,7 +231,7 @@ public class Algoritmos {
         int tiempoAsignado = simulacion / activos.size();
         int i = 0;
 
-        System.out.printf("  %n%s%n", "• Tiempo asignado a cada usuario: " + tiempoAsignado);
+        System.out.printf("%n  %s%n", "• Tiempo asignado a cada usuario: %d unidades.", tiempoAsignado);
         System.out.println("\nTabla inicial de procesos:");
         Planificador.pcb(procesos);
 
