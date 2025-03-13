@@ -511,13 +511,13 @@ public class Algoritmos {
             }
         }
 
+        int prioridadActual = procesos.get(0).getPrioridad();
+
         while(!procesos.isEmpty())
         {
             if (sim <= 0 || procesos.isEmpty()) {
                 break;
             }
-            
-            int prioridadActual = procesos.get(0).getPrioridad();
 
             ArrayList<Proceso> procesosMismaPrioridad = new ArrayList<>();
 
@@ -537,7 +537,7 @@ public class Algoritmos {
                 int TiempoRestante=p.getTiempoRestante();
                 if (!p.getEstado().equals("Terminado")) {
                     int exe=0;
-                    if (procesosMismaPrioridad.isEmpty()) {
+                    if (procesosMismaPrioridad.size() == 1) {
                         if (p.getEstado().equals("Bloqueado")) {
                             for (cont = 0; cont < 3; cont++) {
                                 if (rd.nextInt(2) == 0) { 
@@ -567,24 +567,36 @@ public class Algoritmos {
                                 Planificador.informe(procesos, terminados, pila);
                                 return;
                            } else {
+                                sim -= exe;
+
+                                try {
+                                    if (exe != 0 && pila.peek().getIdProceso() != p.getIdProceso()) 
+                                        pila.push(p);
+                                } catch (Exception e) {
+                                    pila.push(p);
+                                }
+
                                 if (p.getTiempoRestante() <= 0) {
                                     p.setEstado("Terminado");
                                     terminados.add(p.getIdProceso()
                                     );
                                 }
-                               
-                           }
-                            System.out.printf("%n%n • Proceso %d: %s %n • Estado: %s. %n • Simulación restante: %d unidades. %n", 
-                                    p.getIdProceso(), (exe == 0 ? "No se ejecuta." : String.format("Ejecuta %d unidades.", exe)), p.getEstado(),sim);
-                                    Planificador.pcb(procesos);
-                                    if (p.getEstado().equals("Terminado")) {
-                                        procesos.remove(cont);
-                                        procesosMismaPrioridad.remove(cont);
-                                        cont = cont - 1;
-                                    }
+
+                                System.out.printf("%n%n • Proceso %d: %s %n • Estado: %s. %n • Simulación restante: %d unidades. %n", 
+                                p.getIdProceso(), (exe == 0 ? "No se ejecuta." : String.format("Ejecuta %d unidades.", exe)), p.getEstado(),sim);
+                                if (p.getEstado().equals("Terminado")) {
+                                    procesos.remove(cont);
+                                    procesosMismaPrioridad.remove(cont);
+                                    cont = cont - 1;
+                                }
+
+                                Planificador.pcb(procesos);
+                            }
+
+                            break;
                         }
-                        break;
                     }
+
                     exe = Planificador.asignarCPU(sim, quantum, p);
     
                     sim -= exe;
