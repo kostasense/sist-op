@@ -231,7 +231,7 @@ public class Algoritmos {
         int tiempoAsignado = simulacion / activos.size();
         int i = 0;
 
-        System.out.printf("  %s%n", "• Tiempo asignado a cada usuario: " + tiempoAsignado);
+        System.out.printf("  %n%s%n", "• Tiempo asignado a cada usuario: " + tiempoAsignado);
         System.out.println("\nTabla inicial de procesos:");
         Planificador.pcb(procesos);
 
@@ -718,7 +718,7 @@ public class Algoritmos {
         Stack<Proceso> pila = new Stack<>();
         ArrayList<Integer> terminados = new ArrayList<>();
     
-        while (sim > 0 && terminados.size() < procesos.size()) {
+        while (sim > 0 && !procesos.isEmpty()) {
             Proceso menor = null;
             
             for (Proceso p : procesos) {
@@ -729,7 +729,7 @@ public class Algoritmos {
             
             if (menor == null) break; 
     
-            int exe = Planificador.asignarCPU(sim, menor.getTiempoRestante(), menor);
+            int exe = Planificador.asignarCPU(sim, quantum, menor);
             sim -= exe;
             menor.setTiempoRestante(menor.getTiempoRestante() - exe);
             
@@ -743,6 +743,7 @@ public class Algoritmos {
             if (menor.getTiempoRestante() <= 0) {
                 menor.setEstado("Terminado");
                 terminados.add(menor.getIdProceso());
+                procesos.remove(menor);
             }
     
             System.out.printf("%n%n • Proceso %d: %s %n • Estado: %s. %n • Simulación restante: %d unidades. %n", 

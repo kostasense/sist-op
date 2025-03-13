@@ -28,7 +28,7 @@ public class Planificador {
             int sim = rd.nextInt(15) + 20; 
             int quantum = rd.nextInt(6) + 5; 
             System.out.printf("%nSelección de parámetros:%n" + 
-                              "  %s%n  %s%n  %s" + (algoritmos.get(opcion).second().equals("Apropiativa") ? (!opcion.equals("10") || !opcion.equals("7") ? "%n  %s%n" : "") : "%n"),
+                              "  %s%n  %s%n  %s" + (algoritmos.get(opcion).second().equals("Apropiativa") ? (!opcion.equals("10") && !opcion.equals("7") ? "%n  %s%n" : "") : "%n"),
                               "• Tipo de Planificación: " + algoritmos.get(opcion).second(), 
                               "• Algoritmo: " + algoritmos.get(opcion).first(), 
                               "• Tiempo de simulación: " + sim + " unidades", 
@@ -73,11 +73,11 @@ public class Planificador {
         algoritmos.put("3", new Pair<String, String>("Prioridades", "Apropiativa"));
         algoritmos.put("4", new Pair<String, String>("Prioridades", "No apropiativa"));
         algoritmos.put("5", new Pair<String, String>("Múltiples Colas de Prioridad", "No apropiativa"));
-        algoritmos.put("6", new Pair<String, String>("Proceso Más Corto Primero", ""));
+        algoritmos.put("6", new Pair<String, String>("Proceso Más Corto Primero", "Apropiativa"));
         algoritmos.put("7", new Pair<String, String>("Planificación Garantizada", "Apropiativa"));
         algoritmos.put("8", new Pair<String, String>("Boletos de Lotería", "Apropiativa"));
         algoritmos.put("9", new Pair<String, String>("Boletos de Lotería", "No apropiativa"));
-        algoritmos.put("10", new Pair<String, String>("Participación Equitativa", ""));
+        algoritmos.put("10", new Pair<String, String>("Participación Equitativa", "Apropiativa"));
     }
 
     public static void menu() {
@@ -217,7 +217,7 @@ public class Planificador {
             }
             else {
                 p.setEstado("Bloqueado");
-                return rd.nextInt(Math.min(Math.min(simulacion, quantum), p.getTiempoRestante()));
+                return rd.nextInt(Math.min(Math.min(simulacion, quantum), p.getTiempoRestante())) + 1;
             }
         }
         
@@ -226,7 +226,7 @@ public class Planificador {
                 p.setEstado("Listo");
                 return Math.min(Math.min(simulacion, quantum), p.getTiempoRestante());
             } else 
-                return rd.nextInt(Math.min(Math.min(simulacion, quantum), p.getTiempoRestante()));
+                return rd.nextInt(Math.min(Math.min(simulacion, quantum), p.getTiempoRestante())) + 1;
 
         return 0;
     }
@@ -239,7 +239,7 @@ public class Planificador {
                 return exe;
             } else {
                 p.setEstado("Bloqueado");
-                int exe = rd.nextInt(Math.min(sim, p.getTiempoRestante()));
+                int exe = rd.nextInt(Math.min(sim, p.getTiempoRestante())) + 1;
                 p.setTiempoRestante(p.getTiempoRestante() - exe);
                 return exe;
             }
@@ -255,7 +255,7 @@ public class Planificador {
                         return exe;
                     } else {
                         p.setEstado("Bloqueado");
-                        int exe = rd.nextInt(Math.min(sim, p.getTiempoRestante()));
+                        int exe = rd.nextInt(Math.min(sim, p.getTiempoRestante())) + 1;
                         p.setTiempoRestante(p.getTiempoRestante() - exe);
                         return exe;
                     }
