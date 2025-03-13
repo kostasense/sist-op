@@ -681,7 +681,11 @@ public class Algoritmos {
                 }
                 
                 if (p.getEstado().equals("Bloqueado")&&intentos>=3) {
-                    System.out.printf("\n\n • Muerte del proceso %d por inanición.\n", p.getIdProceso());
+                    System.out.println("""
+                                    ╔═══════════════════════════════════╗
+                                    ║ MUERTE POR INANICION.             ║
+                                    ╚═══════════════════════════════════╝
+                                        """);
                     Planificador.informe(procesos, terminados, pila);
                     return;
                 }
