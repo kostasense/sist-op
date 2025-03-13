@@ -539,7 +539,7 @@ public class Algoritmos {
                     int exe=0;
                     if (procesosMismaPrioridad.size() == 1) {
                         if (p.getEstado().equals("Bloqueado")) {
-                            for (cont = 0; cont < 3; cont++) {
+                            for (int cont2 = 0; cont2 < 3; cont2++) {
                                 if (rd.nextInt(2) == 0) { 
                                     p.setEstado("Listo");
                                     if (rd.nextInt(2) == 0) {
