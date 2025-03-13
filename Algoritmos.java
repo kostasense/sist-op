@@ -499,77 +499,142 @@ public class Algoritmos {
         
         System.out.println("\nTabla inicial de procesos:");
         Planificador.pcb(procesos);
-                            
+        
         Stack<Proceso> pila = new Stack<>();
         ArrayList<Integer> terminados = new ArrayList<>();
-        
-        while (sim > 0 && terminados.size() < procesos.size()) {
-       
-            for (int i = 0; i < procesos.size() - 1; i++) {
-                for (int j = i + 1; j < procesos.size(); j++) {
-                    if (procesos.get(i).getPrioridad() < procesos.get(j).getPrioridad()) {
-                        Collections.swap(procesos, i, j);
-                    }
+
+        for (int i = 0; i < procesos.size() - 1; i++) {
+            for (int j = i + 1; j < procesos.size(); j++) {
+                if (procesos.get(i).getPrioridad() < procesos.get(j).getPrioridad()) {
+                    Collections.swap(procesos, i, j);
+                }
+            }
+        }
+
+        int prioridadActual = procesos.get(0).getPrioridad();
+
+        while(!procesos.isEmpty())
+        {
+            if (sim <= 0 || procesos.isEmpty()) {
+                break;
+            }
+
+            ArrayList<Proceso> procesosMismaPrioridad = new ArrayList<>();
+
+            for (Proceso p : procesos) {
+                if (p.getPrioridad() == prioridadActual) {
+                    procesosMismaPrioridad.add(p);
                 }
             }
 
-            int intentos = 0;
-            for (int cont = 0; cont < procesos.size(); cont++) {
+            for (int cont = 0; cont < procesosMismaPrioridad.size(); cont++) {
 
-                if (sim <= 0 || terminados.size() == procesos.size()) {
+                if (sim <= 0 || procesosMismaPrioridad.isEmpty()) {
                     break;
                 }
-
-                Proceso p = procesos.get(cont);
-                
-                
-                if (p.getEstado().equals("Bloqueado") && intentos < 3) {
-                    int desbloqueo = rd.nextInt(2);
-                    if (desbloqueo == 1) {
-                        p.setEstado("Listo");
-                        break;
-                    }
-                    intentos++;
-                }
-                
-                if (p.getEstado().equals("Bloqueado")&&intentos>=3) {
-                    System.out.printf("\n\n • Muerte del proceso %d por inanición.\n", p.getIdProceso());
-                    Planificador.informe(procesos, terminados, pila);
-                    return;
-                }
-                
+    
+                Proceso p = procesosMismaPrioridad.get(cont);
+                int TiempoRestante=p.getTiempoRestante();
                 if (!p.getEstado().equals("Terminado")) {
-                    int exe = Planificador.asignarCPU(sim, quantum, p);
+                    int exe=0;
+                    if (procesosMismaPrioridad.size() == 1) {
+                        if (p.getEstado().equals("Bloqueado")) {
+                            for (cont = 0; cont < 3; cont++) {
+                                if (rd.nextInt(2) == 0) { 
+                                    p.setEstado("Listo");
+                                    if (rd.nextInt(2) == 0) {
+                                            exe = Math.min(sim,Math.min(p.getTiempoRestante(),quantum));
+                                        p.setTiempoRestante(p.getTiempoRestante() - exe);
+                                    break;
+                                    } else {
+                                        p.setEstado("Bloqueado");
+                                            exe = rd.nextInt(Math.min(sim,Math.min(p.getTiempoRestante(),quantum))) + 1;
+                                        p.setTiempoRestante(p.getTiempoRestante() - exe);
+                                      break;
+                                    }
+                                }
+                            }
+                            
+                           if (p.getTiempoRestante()==TiempoRestante) {
+                                System.out.printf("%n%n • Proceso %d: %s %n • Estado: %s. %n • Simulación restante: %d unidades. %n", 
+                                          p.getIdProceso(), "No se ejecuta.", p.getEstado(), sim);                    
+                                Planificador.pcb(procesos);
+                                System.out.println("""
+                                    ╔═══════════════════════════════════╗
+                                    ║ MUERTE POR INANICION.             ║
+                                    ╚═══════════════════════════════════╝
+                                        """);
+                                Planificador.informe(procesos, terminados, pila);
+                                return;
+                           } else {
+                                sim -= exe;
+
+                                try {
+                                    if (exe != 0 && pila.peek().getIdProceso() != p.getIdProceso()) 
+                                        pila.push(p);
+                                } catch (Exception e) {
+                                    pila.push(p);
+                                }
+
+                                if (p.getTiempoRestante() <= 0) {
+                                    p.setEstado("Terminado");
+                                    terminados.add(p.getIdProceso()
+                                    );
+                                }
+
+                                System.out.printf("%n%n • Proceso %d: %s %n • Estado: %s. %n • Simulación restante: %d unidades. %n", 
+                                p.getIdProceso(), (exe == 0 ? "No se ejecuta." : String.format("Ejecuta %d unidades.", exe)), p.getEstado(),sim);
+                                if (p.getEstado().equals("Terminado")) {
+                                    procesos.remove(cont);
+                                    procesosMismaPrioridad.remove(cont);
+                                    cont = cont - 1;
+                                }
+
+                                Planificador.pcb(procesos);
+                            }
+
+                            break;
+                        }
+                    }
+
+                    exe = Planificador.asignarCPU(sim, quantum, p);
+    
                     sim -= exe;
                     p.setTiempoRestante(p.getTiempoRestante() - exe);
-                    
+    
                     try {
                         if (exe != 0 && pila.peek().getIdProceso() != p.getIdProceso()) 
                             pila.push(p);
                     } catch (Exception e) {
                         pila.push(p);
                     }
-
+    
                     if (p.getTiempoRestante() <= 0) {
                         p.setEstado("Terminado");
                         terminados.add(p.getIdProceso());
                     }
-                    
-                    System.out.printf("%n%n • Proceso %d (Prioridad %d): %s %n • Estado: %s. %n • Simulación restante: %d unidades. %n", 
-                                      p.getIdProceso(), p.getPrioridad(), (exe == 0 ? "No se ejecuta." : String.format("Ejecuta %d unidades.", exe)), p.getEstado(), sim);
+    
+                    System.out.printf("%n%n • Proceso %d: %s %n • Estado: %s. %n • Simulación restante: %d unidades. %n", 
+                                      p.getIdProceso(), (exe == 0 ? "No se ejecuta." : String.format("Ejecuta %d unidades.", exe)), p.getEstado(), sim);
                     
                     if (p.getEstado().equals("Terminado")) {
                         procesos.remove(cont);
-                        cont--;
+                        procesosMismaPrioridad.remove(cont);
+                        cont = cont - 1;
                     }
-                    
+    
                     Planificador.pcb(procesos);
                 }
-                
+    
                 if (cont == (procesos.size() - 1)) {
                     cont = -1;
                 }
             }
+
+            if (!procesos.isEmpty()) {
+                prioridadActual = procesos.get(0).getPrioridad();
+            }
+
         }
         
         Planificador.informe(procesos, terminados, pila);
