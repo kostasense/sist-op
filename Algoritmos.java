@@ -653,7 +653,7 @@ public class Algoritmos {
         Stack<Proceso> pila = new Stack<>();
         ArrayList<Integer> terminados = new ArrayList<>();
         
-        while (sim > 0 && terminados.size() < procesos.size()) {
+        while (sim > 0 && !procesos.isEmpty()) {
            
             for (int i = 0; i < procesos.size() - 1; i++) {
                 for (int j = i + 1; j < procesos.size(); j++) {
@@ -662,9 +662,12 @@ public class Algoritmos {
                     }
                 }
             }
-             int intentos = 0;
+            
+            int intentos = 0;
+
             for (int cont = 0; cont < procesos.size(); cont++) {
-                if (sim <= 0 || terminados.size() == procesos.size()) {
+
+                if (sim <= 0 || procesos.isEmpty()) {
                     break;
                 }
     
