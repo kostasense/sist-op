@@ -73,7 +73,7 @@ public class Algoritmos {
                     procesos.remove(p);
                 }
 
-                System.out.printf("%n%n • Proceso %d: %s %n • Estado: %s. %n • Simulación restante: %d unidades. %n", p.getIdProceso(), 
+                System.out.printf("%n%n • Boleto ganador: [%d]%n • Proceso %d: %s %n • Estado: %s. %n • Simulación restante: %d unidades. %n", boletoGanador, p.getIdProceso(), 
                                 (tiempoEjecucion == 0 ? "No se ejecuta." : String.format("Ejecuta %d unidades.", tiempoEjecucion)), p.getEstado(), simulacion);
                 Planificador.pcb(procesos);
 
@@ -162,7 +162,7 @@ public class Algoritmos {
                 }
             }
 
-            System.out.printf("%n%n • Proceso %d: %s %n • Estado: %s. %n • Simulación restante: %d unidades. %n", p.getIdProceso(), 
+            System.out.printf("%n%n • Boleto ganador: [%d]%n • Proceso %d: %s %n • Estado: %s. %n • Simulación restante: %d unidades. %n", boletoGanador, p.getIdProceso(), 
                             (tiempo == 0 ? "No se ejecuta." : String.format("Ejecuta %d unidades.", tiempo)), p.getEstado(), simulacion);
             Planificador.pcb(procesos);  
         }
