@@ -14,7 +14,6 @@ public class Planificador {
         opcion = Keyboard.readString();
 
         while (!opcion.equalsIgnoreCase("F")) {
-
             if (opcion.matches("\\d+") && (Integer.parseInt(opcion) >= 1 && Integer.parseInt(opcion) <= 10)) {
                 break;
             } else {

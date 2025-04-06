@@ -1,5 +1,7 @@
 import java.util.*;
 
+import javax.swing.plaf.metal.MetalBorders.PaletteBorder;
+
 public class Algoritmos {
     static Random rd = new Random();
 
@@ -36,6 +38,12 @@ public class Algoritmos {
             loteria[j] = temp;
         }
 
+        int nuevoProceso = rd.nextInt(procesos.size()) + 1;
+        int contadorBoletos = 0;
+        int ultimoID = procesos.get(procesos.size() - 1).getIdProceso();
+
+        System.out.printf("%nNuevo proceso despues de %d boletos ganadores.%n", nuevoProceso);
+
         System.out.println("\nTabla inicial de procesos:");
         Planificador.pcb(procesos);
 
@@ -44,6 +52,8 @@ public class Algoritmos {
 
             while (!boletoPorProceso.containsKey(boletoGanador))
                 boletoGanador = loteria[rd.nextInt(loteria.length)];
+
+            contadorBoletos++;
 
             Proceso p = boletoPorProceso.get(boletoGanador);
             int tiempoRestante = 0, tiempoEjecucion = 0;
@@ -83,7 +93,27 @@ public class Algoritmos {
                 } catch (Exception e) {
                     pila.push(p);
                 } 
+
             } while (p.getTiempoRestante() != 0 && simulacion > 0);
+
+            // Crear nuevo proceso
+            if (contadorBoletos == nuevoProceso) {
+                procesos.add(new Proceso(++ultimoID, rd.nextInt(8) + 3, (rd.nextInt(2) == 1 ? "Listo" : "Bloqueado")));
+
+                int prioridad = rd.nextInt(4) + 1;
+                procesos.get(procesos.size() - 1).setPrioridad(prioridad);
+
+                ArrayList<Integer> boletosProceso = new ArrayList<>();
+                for(int i = 0; i < boletosPorPrioridad[prioridad]; i++) {
+                    boletosProceso.add(boletoActual);
+                    boletoPorProceso.put(boletoActual, procesos.get(procesos.size() - 1));
+                    boletoActual++;
+                }
+                procesos.get(procesos.size() - 1).setBoleto(boletosProceso);
+
+                System.out.printf("%nProceso creado: Proceso %d.%n", procesos.get(procesos.size() - 1).getIdProceso());
+                Planificador.pcb(procesos);
+            }
 
             Iterator<Map.Entry<Integer, Proceso>> iter = boletoPorProceso.entrySet().iterator();
             while (iter.hasNext()) {
