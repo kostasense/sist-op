@@ -1,4 +1,5 @@
 import java.lang.reflect.Field;
+import java.text.CollationElementIterator;
 import java.util.*;
 
 public class Planificador {
@@ -218,15 +219,15 @@ public class Planificador {
                            "%n  • Cambios de proceso registrados: %s%n%n", (terminados.isEmpty() ? "Ninguno" : terminados.substring(0, terminados.length() - 2)), (noEjecutados.isEmpty() ? "Ninguno" : noEjecutados.substring(0, noEjecutados.length() - 2)), (enEjecucion.isEmpty() ? "Ninguno" : enEjecucion.substring(0, enEjecucion.length() - 2)), pila.size());
     }
 
-    public static void generarPeticiones(Proceso p) {
-        int numPeticiones = Math.min(rd.nextInt(2) + 1, (10 - peticiones[p.getId()]));
+    public static void generarPeticiones(Proceso p, Collection<String> peticiones) {
+        int numPeticiones = Math.min(rd.nextInt(2) + 1, (10 - Planificador.peticiones[p.getId()]));
         while (numPeticiones-- >= 0)
-            p.getPeticiones().add(rd.nextInt(20) + 1 + (rd.nextInt(2) == 1 ? "L" : "E"));
+            peticiones.add(rd.nextInt(20) + 1 + (rd.nextInt(2) == 1 ? "L" : "E"));
     }
 
     public static int asignarCPU(int simulacion, int quantum, Proceso p) {
         if (p.getEstado().equals("Listo")) {
-            if (rd.nextInt(2) == 0) generarPeticiones(p);
+            if (rd.nextInt(2) == 0) generarPeticiones(p, p.getPeticiones());
             return Math.min(Math.min(simulacion, quantum), p.getTiempoRestante());
         }
 
@@ -287,7 +288,6 @@ public class Planificador {
             }
             return sim;
         }
-    
         return 0;
     }
 }
