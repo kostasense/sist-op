@@ -7,7 +7,7 @@ public class Proceso {
     private Integer prioridad;
     private ArrayList<Integer> boletos;
     private Integer usuario;
-    private ArrayList<String> peticiones;
+    private ArrayList<Peticion> peticiones;
 
     public Proceso(Integer idProceso, Integer tiempoRestante, String estado) {
         this.idProceso = idProceso;
@@ -74,13 +74,11 @@ public class Proceso {
                 '}';
     }
 
-    public ArrayList<String> getPeticiones() {
+    public ArrayList<Peticion> getPeticiones() {
         return peticiones;
     }
 
-    public void setPeticiones(ArrayList<String> peticiones) {
+    public void setPeticiones(ArrayList<Peticion> peticiones) {
         this.peticiones = peticiones;
     }
-
-    
 }

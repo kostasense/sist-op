@@ -1,16 +1,20 @@
 import java.util.*;
 
 public class AdministracionES {
-    public static HashMap<String, Integer> costoPeticion = new HashMap<>();
+    public static void fscan(Proceso p, int cabeza) {
+        LinkedList<Peticion> p1 = new LinkedList<>(p.getPeticiones());
+        LinkedList<Peticion> p2 = new LinkedList<>();
 
-    public static void fscan(Proceso p) {
-        ArrayDeque<String> p1 = new ArrayDeque<>(p.getPeticiones());
-        ArrayDeque<String> p2 = new ArrayDeque<>();
-
-        int sectorActual = 0, distancia = 0;
+        int sectorActual = 0, distancia = 0, rendimiento = 0, direccion = 0;
 
         while (!p1.isEmpty() && !p2.isEmpty()) {
 
+            while (!p1.isEmpty()) {
+                if (direccion == 0) Collections.sort(p1);
+                else p1.sort(Collections.reverseOrder());
+
+                direccion = Math.abs(cabeza-sectorActual);
+            }
         }
     }
 }
