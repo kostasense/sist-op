@@ -196,7 +196,6 @@ public class Planificador {
             p.setPeticiones(peticiones);
             Planificador.peticiones[p.getId()] = numPeticiones;
             procesos.add(p);
-            
         }
     }
 
@@ -232,6 +231,8 @@ public class Planificador {
 
             peticiones.add(new Peticion(sector, tipo, costo));
         }
+
+        Planificador.peticiones[p.getId()] += numPeticiones;
     }
 
     public static int asignarCPU(int simulacion, int quantum, Proceso p) {
