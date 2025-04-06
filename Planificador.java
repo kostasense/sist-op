@@ -4,6 +4,7 @@ import java.util.*;
 public class Planificador {
     static Random rd = new Random();
     static HashMap<String, Pair<String, String>> algoritmos = new HashMap<>();
+    static int[] peticiones = new int[11];
 
     public static void main(String[] args) {
         parametrosAlgoritmos();
@@ -37,16 +38,16 @@ public class Planificador {
             generarProcesos(procesos);
 
             switch (opcion) {
-                case "1" -> Algoritmos.roundRobinA(procesos, sim, quantum);
-                case "2" -> Algoritmos.roundRobinNA(procesos, sim);
-                case "3" -> Algoritmos.prioridadA(procesos, sim, quantum);
-                case "4" -> Algoritmos.prioridadNA(procesos, sim);
-                case "5" -> Algoritmos.multiplesColas(procesos, sim);
-                case "6" -> Algoritmos.masCortoPrimero(procesos, sim, quantum);
-                case "7" -> Algoritmos.planificacionGarantizada(procesos, sim);
-                case "8" -> Algoritmos.loteriaApropiativa(procesos, sim, quantum);
-                case "9" -> Algoritmos.loteriaNoApropiativa(procesos, sim);
-                case "10" -> Algoritmos.participacionEquitativa(procesos, sim);
+                case "1" -> AdministracionProcesos.roundRobinA(procesos, sim, quantum);
+                case "2" -> AdministracionProcesos.roundRobinNA(procesos, sim);
+                case "3" -> AdministracionProcesos.prioridadA(procesos, sim, quantum);
+                case "4" -> AdministracionProcesos.prioridadNA(procesos, sim);
+                case "5" -> AdministracionProcesos.multiplesColas(procesos, sim);
+                case "6" -> AdministracionProcesos.masCortoPrimero(procesos, sim, quantum);
+                case "7" -> AdministracionProcesos.planificacionGarantizada(procesos, sim);
+                case "8" -> AdministracionProcesos.loteriaApropiativa(procesos, sim, quantum);
+                case "9" -> AdministracionProcesos.loteriaNoApropiativa(procesos, sim);
+                case "10" -> AdministracionProcesos.participacionEquitativa(procesos, sim);
                 default -> throw new AssertionError();
             }
 
@@ -180,7 +181,17 @@ public class Planificador {
     public static void generarProcesos(Collection<Proceso> procesos) {
         int numProcesos = rd.nextInt(10) + 1;
         for(int i = 0; i < numProcesos; i++) {
-            procesos.add(new Proceso(procesos.size() + 1, rd.nextInt(8) + 3, (rd.nextInt(2) == 1 ? "Listo" : "Bloqueado")));
+            Proceso p = new Proceso(procesos.size() + 1, rd.nextInt(8) + 3, (rd.nextInt(2) == 1 ? "Listo" : "Bloqueado"));
+
+            int numPeticiones = (p.getEstado().equals("Bloqueado") ? rd.nextInt(5) + 1 : 0);
+            ArrayList<String> peticiones = new ArrayList<>();
+            while (numPeticiones-- >= 0)
+                peticiones.add(rd.nextInt(20) + 1 + (rd.nextInt(2) == 1 ? "L" : "E"));
+
+            p.setPeticiones(peticiones);
+            Planificador.peticiones[p.getId()] = numPeticiones;
+            procesos.add(p);
+            
         }
     }
 
@@ -194,13 +205,11 @@ public class Planificador {
         String enEjecucion = "";
 
         for (Proceso p : procesos) {
-            if (!pila.contains(p)) noEjecutados += p.getIdProceso() + ", ";
-            if (pila.contains(p)) enEjecucion += p.getIdProceso() + ", ";
+            if (!pila.contains(p)) noEjecutados += p.getId() + ", ";
+            if (pila.contains(p)) enEjecucion += p.getId() + ", ";
         }
         
-        for (Integer id : terminadosLista) {
-            terminados += id + ", ";
-        }
+        for (Integer id : terminadosLista) terminados += id + ", ";
 
         System.out.printf("%nInforme final:" +
                            "%n  • Procesos terminados: %s" +
@@ -209,7 +218,23 @@ public class Planificador {
                            "%n  • Cambios de proceso registrados: %s%n%n", (terminados.isEmpty() ? "Ninguno" : terminados.substring(0, terminados.length() - 2)), (noEjecutados.isEmpty() ? "Ninguno" : noEjecutados.substring(0, noEjecutados.length() - 2)), (enEjecucion.isEmpty() ? "Ninguno" : enEjecucion.substring(0, enEjecucion.length() - 2)), pila.size());
     }
 
+    public static void generarPeticiones(Proceso p) {
+        int numPeticiones = Math.min(rd.nextInt(2) + 1, (10 - peticiones[p.getId()]));
+        while (numPeticiones-- >= 0)
+            p.getPeticiones().add(rd.nextInt(20) + 1 + (rd.nextInt(2) == 1 ? "L" : "E"));
+    }
+
     public static int asignarCPU(int simulacion, int quantum, Proceso p) {
+        if (p.getEstado().equals("Listo")) {
+            if (rd.nextInt(2) == 0) generarPeticiones(p);
+            return Math.min(Math.min(simulacion, quantum), p.getTiempoRestante());
+        }
+
+        p.setEstado("Listo");
+        return Math.min(Math.min(simulacion, quantum), p.getTiempoRestante());
+    }
+
+    /*public static int asignarCPU(int simulacion, int quantum, Proceso p) {
         if (p.getEstado().equals("Listo")) {
             if (rd.nextInt(2) == 1) {
                 return Math.min(Math.min(simulacion, quantum), p.getTiempoRestante());
@@ -228,7 +253,7 @@ public class Planificador {
                 return rd.nextInt(Math.min(Math.min(simulacion, quantum), p.getTiempoRestante())) + 1;
 
         return 0;
-    }
+    }*/
     
     public static int asignarCPUNoApropiativo(int sim, Proceso p) {
         if (p.getEstado().equals("Listo")) {
