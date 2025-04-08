@@ -4,7 +4,7 @@ import java.util.*;
 public class Planificador {
     static Random rd = new Random();
     static HashMap<String, Pair<String, String>> algoritmos = new HashMap<>();
-    static int[] peticiones = new int[11];
+    static int[] peticiones = new int[50];
 
     public static void main(String[] args) {
         parametrosAlgoritmos();
@@ -122,7 +122,7 @@ public class Planificador {
                 if (c.get(procesos.toArray()[0]) != null) {
                     propiedades.add(c);
                     String nombre = modificarCadena(c.getName());
-                    nombrePropiedades.add((nombre.equals("BOLETOS") ? String.format("%-30s", nombre) : nombre));
+                    nombrePropiedades.add((nombre.equals("BOLETOS") || nombre.equals("PETICIONES") ? String.format("%-30s", nombre) : nombre));
                 }
             } catch (Exception e) {
                 System.out.println("""
@@ -184,8 +184,11 @@ public class Planificador {
             Proceso p = new Proceso(procesos.size() + 1, rd.nextInt(8) + 3, (rd.nextInt(2) == 1 ? "Listo" : "Bloqueado"));
 
             int numPeticiones = (p.getEstado().equals("Bloqueado") ? rd.nextInt(5) + 1 : 0);
+            Planificador.peticiones[p.getId()] = numPeticiones;
+
             ArrayList<Peticion> peticiones = new ArrayList<>();
-            while (numPeticiones-- >= 0) {
+
+            while (numPeticiones-- > 0) {
                 int sector = rd.nextInt(20) + 1;
                 char tipo = rd.nextInt(2) == 1 ? 'L' : 'E';
                 int costo = (tipo == 'L' ? 1 : 2);
@@ -194,7 +197,6 @@ public class Planificador {
             }
 
             p.setPeticiones(peticiones);
-            Planificador.peticiones[p.getId()] = numPeticiones;
             procesos.add(p);
         }
     }
@@ -223,16 +225,24 @@ public class Planificador {
     }
 
     public static void generarPeticiones(Proceso p, Collection<Peticion> peticiones) {
-        int numPeticiones = Math.min(rd.nextInt(2) + 1, (10 - Planificador.peticiones[p.getId()]));
-        while (numPeticiones-- >= 0) {
+        int maxPeticiones = Math.min(4, (10 - Planificador.peticiones[p.getId()]));
+
+        //System.out.println("ENTRO METODO GENERARPETICIONES");
+
+        if (maxPeticiones == 0) return;
+
+        int numPeticiones = rd.nextInt(maxPeticiones);
+        Planificador.peticiones[p.getId()] += numPeticiones;
+        //System.out.println("Planificador.peticiones[p.getId()]: " + Planificador.peticiones[p.getId()]);
+
+        while (numPeticiones-- > 0) {
+            //System.out.println("ENTRO");
             int sector = rd.nextInt(20) + 1;
             char tipo = rd.nextInt(2) == 1 ? 'L' : 'E';
             int costo = (tipo == 'L' ? 1 : 2);
 
             peticiones.add(new Peticion(sector, tipo, costo));
         }
-
-        Planificador.peticiones[p.getId()] += numPeticiones;
     }
 
     public static int asignarCPU(int simulacion, int quantum, Proceso p) {

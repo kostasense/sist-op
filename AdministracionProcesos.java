@@ -139,10 +139,17 @@ public class AdministracionProcesos {
                 boletoGanador = loteria[rd.nextInt(loteria.length)];
 
             Proceso p = boletoPorProceso.get(boletoGanador);
-            int tiempo = Planificador.asignarCPU(simulacion,  quantum, p);
 
-            simulacion -= tiempo;
-            p.setTiempoRestante((p.getTiempoRestante() - tiempo));
+            int tiempo = 0;
+
+            System.out.printf("%n%n • Boleto ganador: [%d]%n • Proceso %d entra al procesador.", boletoGanador, p.getId());
+
+            //do {
+                tiempo = Planificador.asignarCPU(simulacion,  quantum, p);
+                simulacion -= tiempo;
+                p.setTiempoRestante((p.getTiempoRestante() - tiempo));   
+                AdministracionES.fscan(p, 0);
+            //} while (!p.getPeticiones().isEmpty());
 
             try {
                 if (tiempo != 0 && pila.peek().getId() != p.getId()) 
@@ -163,8 +170,9 @@ public class AdministracionProcesos {
                 }
             }
 
-            System.out.printf("%n%n • Boleto ganador: [%d]%n • Proceso %d: %s %n • Estado: %s. %n • Simulación restante: %d unidades. %n", boletoGanador, p.getId(), 
-                            (tiempo == 0 ? "No se ejecuta." : String.format("Ejecuta %d unidades.", tiempo)), p.getEstado(), simulacion);
+            
+            System.out.printf("%n • Unidades ejecutadas: %s %n • Estado: %s. %n • Simulación restante: %d unidades. %n", 
+                             (tiempo == 0 ? "No se ejecuta." : String.format("%d", tiempo)), p.getEstado(), simulacion);
             Planificador.pcb(procesos);  
         }
 
