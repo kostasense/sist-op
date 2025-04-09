@@ -407,10 +407,10 @@ public class AdministracionProcesos {
                     return;
                 }
 
-                if (p.getIdProceso() == aleatorio) {
-                    Proceso pnuevo = new Proceso(procesos.get(procesos.size() - 1).getIdProceso() + 1, rd.nextInt(8) + 3, (rd.nextInt(2) == 1 ? "Listo" : "Bloqueado"));
+                if (p.getId() == aleatorio) {
+                    Proceso pnuevo = new Proceso(procesos.get(procesos.size() - 1).getId() + 1, rd.nextInt(8) + 3, (rd.nextInt(2) == 1 ? "Listo" : "Bloqueado"));
                     procesos.add(pnuevo);
-                    System.out.println("Se crea nuevo proceso: " + pnuevo.getIdProceso());
+                    System.out.println("Se crea nuevo proceso: " + pnuevo.getId());
                 }
             }
         }
@@ -753,12 +753,12 @@ public class AdministracionProcesos {
                         Planificador.pcb(procesos);
                     }
 
-                    if (p.getIdProceso() == aleatorio) {
+                    if (p.getId() == aleatorio) {
                         Proceso pnuevo = new Proceso(20, rd.nextInt(8) + 3, (rd.nextInt(2) == 1 ? "Listo" : "Bloqueado"));
                             int prioridad = rd.nextInt(4) + 1;
                             pnuevo.setPrioridad(prioridad);
                         procesos.add(pnuevo);
-                        System.out.println("Se crea nuevo proceso: " + pnuevo.getIdProceso());
+                        System.out.println("Se crea nuevo proceso: " + pnuevo.getId());
                     }
                 }
             }
