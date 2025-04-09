@@ -1,6 +1,6 @@
 import java.util.*;
 
-public class Algoritmos {
+public class AdministracionProcesos {
     static Random rd = new Random();
 
     public static void loteriaNoApropiativa(ArrayList<Proceso> procesos, int simulacion) {
@@ -53,7 +53,7 @@ public class Algoritmos {
                 tiempoEjecucion = Planificador.asignarCPUNoApropiativo(simulacion, p);   
 
                 if (p.getTiempoRestante() == tiempoRestante && simulacion == tiempoEjecucion) {
-                    System.out.printf("%n%n • Proceso %d: %s %n • Estado: %s. %n • Simulación restante: %d unidades. %n", p.getIdProceso(), 
+                    System.out.printf("%n%n • Proceso %d: %s %n • Estado: %s. %n • Simulación restante: %d unidades. %n", p.getId(), 
                                      "No se ejecuta.", p.getEstado(), simulacion);
                     System.out.println("""
                                         ╔═══════════════════════════════════╗
@@ -69,20 +69,21 @@ public class Algoritmos {
 
                 if (p.getTiempoRestante() == 0) {
                     p.setEstado("Terminado");
-                    terminados.add(p.getIdProceso());
+                    terminados.add(p.getId());
                     procesos.remove(p);
                 }
 
-                System.out.printf("%n%n • Boleto ganador: [%d]%n • Proceso %d: %s %n • Estado: %s. %n • Simulación restante: %d unidades. %n", boletoGanador, p.getIdProceso(), 
+                System.out.printf("%n%n • Boleto ganador: [%d]%n • Proceso %d: %s %n • Estado: %s. %n • Simulación restante: %d unidades. %n", boletoGanador, p.getId(), 
                                 (tiempoEjecucion == 0 ? "No se ejecuta." : String.format("Ejecuta %d unidades.", tiempoEjecucion)), p.getEstado(), simulacion);
                 Planificador.pcb(procesos);
 
                 try {
-                    if (tiempoEjecucion != 0 && pila.peek().getIdProceso() != p.getIdProceso()) 
+                    if (tiempoEjecucion != 0 && pila.peek().getId() != p.getId()) 
                         pila.push(p);
                 } catch (Exception e) {
                     pila.push(p);
                 } 
+
             } while (p.getTiempoRestante() != 0 && simulacion > 0);
 
             Iterator<Map.Entry<Integer, Proceso>> iter = boletoPorProceso.entrySet().iterator();
@@ -138,13 +139,20 @@ public class Algoritmos {
                 boletoGanador = loteria[rd.nextInt(loteria.length)];
 
             Proceso p = boletoPorProceso.get(boletoGanador);
-            int tiempo = Planificador.asignarCPU(simulacion,  quantum, p);
 
-            simulacion -= tiempo;
-            p.setTiempoRestante((p.getTiempoRestante() - tiempo));
+            int tiempo = 0;
+
+            System.out.printf("%n%n • Boleto ganador: [%d]%n • Proceso %d entra al procesador.", boletoGanador, p.getId());
+
+            //do {
+                tiempo = Planificador.asignarCPU(simulacion,  quantum, p);
+                simulacion -= tiempo;
+                p.setTiempoRestante((p.getTiempoRestante() - tiempo));   
+                AdministracionES.fscan(p, 0);
+            //} while (!p.getPeticiones().isEmpty());
 
             try {
-                if (tiempo != 0 && pila.peek().getIdProceso() != p.getIdProceso()) 
+                if (tiempo != 0 && pila.peek().getId() != p.getId()) 
                     pila.push(p);
             } catch (Exception e) {
                 pila.push(p);
@@ -152,7 +160,7 @@ public class Algoritmos {
                 
             if (p.getTiempoRestante() == 0) {
                 p.setEstado("Terminado");
-                terminados.add(p.getIdProceso());
+                terminados.add(p.getId());
                 procesos.remove(p);
 
                 Iterator<Map.Entry<Integer, Proceso>> iter = boletoPorProceso.entrySet().iterator();
@@ -162,8 +170,9 @@ public class Algoritmos {
                 }
             }
 
-            System.out.printf("%n%n • Boleto ganador: [%d]%n • Proceso %d: %s %n • Estado: %s. %n • Simulación restante: %d unidades. %n", boletoGanador, p.getIdProceso(), 
-                            (tiempo == 0 ? "No se ejecuta." : String.format("Ejecuta %d unidades.", tiempo)), p.getEstado(), simulacion);
+            
+            System.out.printf("%n • Unidades ejecutadas: %s %n • Estado: %s. %n • Simulación restante: %d unidades. %n", 
+                             (tiempo == 0 ? "No se ejecuta." : String.format("%d", tiempo)), p.getEstado(), simulacion);
             Planificador.pcb(procesos);  
         }
 
@@ -189,7 +198,7 @@ public class Algoritmos {
             p.setTiempoRestante((p.getTiempoRestante() - tiempo));
 
             try {
-                if (tiempo != 0 && pila.peek().getIdProceso() != p.getIdProceso()) 
+                if (tiempo != 0 && pila.peek().getId() != p.getId()) 
                     pila.push(p);
             } catch (Exception e) {
                 pila.push(p);
@@ -197,13 +206,13 @@ public class Algoritmos {
     
             if (p.getTiempoRestante() == 0) {
                 p.setEstado("Terminado");
-                terminados.add(p.getIdProceso());
+                terminados.add(p.getId());
                 procesos.remove(i);
             } else {
                 i++;
             }
 
-            System.out.printf("%n%n • Proceso %d: %s %n • Estado: %s. %n • Simulación restante: %d unidades. %n", p.getIdProceso(), 
+            System.out.printf("%n%n • Proceso %d: %s %n • Estado: %s. %n • Simulación restante: %d unidades. %n", p.getId(), 
                             (tiempo == 0 ? "No se ejecuta." : String.format("Ejecuta %d unidades.", tiempo)), p.getEstado(), simulacion);
             Planificador.pcb(procesos);  
 
@@ -245,7 +254,7 @@ public class Algoritmos {
             p.setTiempoRestante((p.getTiempoRestante() - tiempo));
             
             try {
-                if (tiempo != 0 && pila.peek().getIdProceso() != p.getIdProceso()) 
+                if (tiempo != 0 && pila.peek().getId() != p.getId()) 
                     pila.push(p);
             } catch (Exception e) {
                 pila.push(p);
@@ -253,7 +262,7 @@ public class Algoritmos {
 
             if (p.getTiempoRestante() == 0) {
                 p.setEstado("Terminado");
-                terminados.add(p.getIdProceso());
+                terminados.add(p.getId());
                 procesos.remove(i);
                 procesosPorUsuario[p.getUsuario()]--;
 
@@ -265,7 +274,7 @@ public class Algoritmos {
                 i++;
             }
 
-            System.out.printf("%n%n • Proceso %d: %s %n • Estado: %s. %n • Simulación restante: %d unidades. %n", p.getIdProceso(), 
+            System.out.printf("%n%n • Proceso %d: %s %n • Estado: %s. %n • Simulación restante: %d unidades. %n", p.getId(), 
             (tiempo == 0 ? "No se ejecuta." : String.format("Ejecuta %d unidades.", tiempo)), p.getEstado(), simulacion);
             Planificador.pcb(procesos); 
 
@@ -300,7 +309,7 @@ public class Algoritmos {
                 p.setTiempoRestante(p.getTiempoRestante() - exe);
 
                 try {
-                    if (exe != 0 && pila.peek().getIdProceso() != p.getIdProceso()) 
+                    if (exe != 0 && pila.peek().getId() != p.getId()) 
                         pila.push(p);
                 } catch (Exception e) {
                     pila.push(p);
@@ -308,11 +317,11 @@ public class Algoritmos {
 
                 if (p.getTiempoRestante() <= 0) {
                     p.setEstado("Terminado");
-                    terminados.add(p.getIdProceso());
+                    terminados.add(p.getId());
                 }
 
                 System.out.printf("%n%n • Proceso %d: %s %n • Estado: %s. %n • Simulación restante: %d unidades. %n", 
-                                  p.getIdProceso(), (exe == 0 ? "No se ejecuta." : String.format("Ejecuta %d unidades.", exe)), p.getEstado(), sim);
+                                  p.getId(), (exe == 0 ? "No se ejecuta." : String.format("Ejecuta %d unidades.", exe)), p.getEstado(), sim);
                 
                 if (p.getEstado().equals("Terminado")) {
                     procesos.remove(cont);
@@ -360,7 +369,7 @@ public class Algoritmos {
                     sim -= exe;
 
                     try {
-                        if (exe != 0 && pila.peek().getIdProceso() != p.getIdProceso()) 
+                        if (exe != 0 && pila.peek().getId() != p.getId()) 
                             pila.push(p);
                     } catch (Exception e) {
                         pila.push(p);
@@ -368,13 +377,13 @@ public class Algoritmos {
 
                     if (p.getTiempoRestante() <= 0) {
                         p.setEstado("Terminado");
-                        terminados.add(p.getIdProceso());
+                        terminados.add(p.getId());
                     } else {
                         cont = cont - 1;
                     }
 
                     System.out.printf("%n%n • Proceso %d: %s %n • Estado: %s. %n • Simulación restante: %d unidades. %n", 
-                                      p.getIdProceso(), (exe == 0 ? "No se ejecuta." : String.format("Ejecuta %d unidades.", exe)), p.getEstado(), sim); 
+                                      p.getId(), (exe == 0 ? "No se ejecuta." : String.format("Ejecuta %d unidades.", exe)), p.getEstado(), sim); 
                                       
                     if (p.getEstado().equals("Terminado")) {
                         procesos.remove(cont);
@@ -386,7 +395,7 @@ public class Algoritmos {
 
                 if (sim == exe && (p.getTiempoRestante() == tiempoRestante)) {
                     System.out.printf("%n%n • Proceso %d: %s %n • Estado: %s. %n • Simulación restante: %d unidades. %n", 
-                                      p.getIdProceso(), "No se ejecuta.", p.getEstado(), sim);                    
+                                      p.getId(), "No se ejecuta.", p.getEstado(), sim);                    
                     Planificador.pcb(procesos);
 
                     System.out.println("""
@@ -457,7 +466,7 @@ public class Algoritmos {
                     sim -= exe;
 
                     try {
-                        if (exe != 0 && pila.peek().getIdProceso() != p.getIdProceso()) 
+                        if (exe != 0 && pila.peek().getId() != p.getId()) 
                             pila.push(p);
                     } catch (Exception e) {
                         pila.push(p);
@@ -465,13 +474,13 @@ public class Algoritmos {
 
                     if (p.getTiempoRestante() <= 0) {
                         p.setEstado("Terminado");
-                        terminados.add(p.getIdProceso());
+                        terminados.add(p.getId());
                     } else {
                         stack.push(p);
                     }
 
                     System.out.printf("%n%n • Proceso %d: %s %n • Estado: %s. %n • Simulación restante: %d unidades. %n", 
-                                      p.getIdProceso(), (exe == 0 ? "No se ejecuta." : String.format("Ejecuta %d unidades.", exe)), p.getEstado(), sim); 
+                                      p.getId(), (exe == 0 ? "No se ejecuta." : String.format("Ejecuta %d unidades.", exe)), p.getEstado(), sim); 
                                       
                     if (p.getEstado().equals("Terminado")) {
                         procesos.remove(p);
@@ -482,7 +491,7 @@ public class Algoritmos {
 
                 if (sim == exe && (p.getTiempoRestante() == tiempoRestante)) {
                     System.out.printf("%n%n • Proceso %d: %s %n • Estado: %s. %n • Simulación restante: %d unidades. %n", 
-                                      p.getIdProceso(), "No se ejecuta.", p.getEstado(), sim);                    
+                                      p.getId(), "No se ejecuta.", p.getEstado(), sim);                    
                     Planificador.pcb(procesos);
 
                     System.out.println("""
@@ -566,7 +575,7 @@ public class Algoritmos {
                             
                            if (p.getTiempoRestante()==TiempoRestante) {
                                 System.out.printf("%n%n • Proceso %d: %s %n • Estado: %s. %n • Simulación restante: %d unidades. %n", 
-                                          p.getIdProceso(), "No se ejecuta.", p.getEstado(), sim);                    
+                                          p.getId(), "No se ejecuta.", p.getEstado(), sim);                    
                                 Planificador.pcb(procesos);
                                 System.out.println("""
                                     ╔═══════════════════════════════════╗
@@ -579,7 +588,7 @@ public class Algoritmos {
                                 sim -= exe;
 
                                 try {
-                                    if (exe != 0 && pila.peek().getIdProceso() != p.getIdProceso()) 
+                                    if (exe != 0 && pila.peek().getId() != p.getId()) 
                                         pila.push(p);
                                 } catch (Exception e) {
                                     pila.push(p);
@@ -587,12 +596,12 @@ public class Algoritmos {
 
                                 if (p.getTiempoRestante() <= 0) {
                                     p.setEstado("Terminado");
-                                    terminados.add(p.getIdProceso()
+                                    terminados.add(p.getId()
                                     );
                                 }
 
                                 System.out.printf("%n%n • Proceso %d: %s %n • Estado: %s. %n • Simulación restante: %d unidades. %n", 
-                                p.getIdProceso(), (exe == 0 ? "No se ejecuta." : String.format("Ejecuta %d unidades.", exe)), p.getEstado(),sim);
+                                p.getId(), (exe == 0 ? "No se ejecuta." : String.format("Ejecuta %d unidades.", exe)), p.getEstado(),sim);
                                 if (p.getEstado().equals("Terminado")) {
                                     procesos.remove(cont);
                                     procesosMismaPrioridad.remove(cont);
@@ -612,7 +621,7 @@ public class Algoritmos {
                     p.setTiempoRestante(p.getTiempoRestante() - exe);
     
                     try {
-                        if (exe != 0 && pila.peek().getIdProceso() != p.getIdProceso()) 
+                        if (exe != 0 && pila.peek().getId() != p.getId()) 
                             pila.push(p);
                     } catch (Exception e) {
                         pila.push(p);
@@ -620,11 +629,11 @@ public class Algoritmos {
     
                     if (p.getTiempoRestante() <= 0) {
                         p.setEstado("Terminado");
-                        terminados.add(p.getIdProceso());
+                        terminados.add(p.getId());
                     }
     
                     System.out.printf("%n%n • Proceso %d: %s %n • Estado: %s. %n • Simulación restante: %d unidades. %n", 
-                                      p.getIdProceso(), (exe == 0 ? "No se ejecuta." : String.format("Ejecuta %d unidades.", exe)), p.getEstado(), sim);
+                                      p.getId(), (exe == 0 ? "No se ejecuta." : String.format("Ejecuta %d unidades.", exe)), p.getEstado(), sim);
                     
                     if (p.getEstado().equals("Terminado")) {
                         procesos.remove(cont);
@@ -704,7 +713,7 @@ public class Algoritmos {
 
                     if (sim == exe && (p.getTiempoRestante() == tiempoRestante)) {
                         System.out.printf("%n%n • Proceso %d: %s %n • Estado: %s. %n • Simulación restante: %d unidades. %n", 
-                                          p.getIdProceso(), "No se ejecuta.", p.getEstado(), sim);                    
+                                          p.getId(), "No se ejecuta.", p.getEstado(), sim);                    
                         Planificador.pcb(procesos);
     
                         System.out.println("""
@@ -720,7 +729,7 @@ public class Algoritmos {
                         sim -= exe;
                         
                         try {
-                            if (exe != 0 && pila.peek().getIdProceso() != p.getIdProceso()) 
+                            if (exe != 0 && pila.peek().getId() != p.getId()) 
                                 pila.push(p);
                         } catch (Exception e) {
                             pila.push(p);
@@ -728,13 +737,13 @@ public class Algoritmos {
     
                         if (p.getTiempoRestante() <= 0) {
                             p.setEstado("Terminado");
-                            terminados.add(p.getIdProceso());
+                            terminados.add(p.getId());
                         } else {
                             cont--;
                         }
     
                         System.out.printf("%n%n • Proceso %d (Prioridad %d): %s %n • Estado: %s. %n • Simulación restante: %d unidades. %n", 
-                                          p.getIdProceso(), p.getPrioridad(), (exe == 0 ? "No se ejecuta." : String.format("Ejecuta %d unidades.", exe)), p.getEstado(), sim);
+                                          p.getId(), p.getPrioridad(), (exe == 0 ? "No se ejecuta." : String.format("Ejecuta %d unidades.", exe)), p.getEstado(), sim);
                         
                         if (p.getEstado().equals("Terminado")) {
                             procesos.remove(cont);
@@ -786,7 +795,7 @@ public class Algoritmos {
             menor.setTiempoRestante(menor.getTiempoRestante() - exe);
             
             try {
-                if (exe != 0 && pila.peek().getIdProceso() != menor.getIdProceso()) 
+                if (exe != 0 && pila.peek().getId() != menor.getId()) 
                     pila.push(menor);
             } catch (Exception e) {
                 pila.push(menor);
@@ -794,12 +803,12 @@ public class Algoritmos {
     
             if (menor.getTiempoRestante() <= 0) {
                 menor.setEstado("Terminado");
-                terminados.add(menor.getIdProceso());
+                terminados.add(menor.getId());
                 procesos.remove(menor);
             }
     
             System.out.printf("%n%n • Proceso %d: %s %n • Estado: %s. %n • Simulación restante: %d unidades. %n", 
-                              menor.getIdProceso(), (exe == 0 ? "No se ejecuta." : String.format("Ejecuta %d unidades.", exe)), menor.getEstado(), sim);
+                              menor.getId(), (exe == 0 ? "No se ejecuta." : String.format("Ejecuta %d unidades.", exe)), menor.getEstado(), sim);
             
             Planificador.pcb(procesos);
         }

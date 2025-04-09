@@ -1,13 +1,13 @@
 import java.util.*;
 
 public class Proceso {
-    // Agregar datos requeridos por el algoritmo.
     private Integer idProceso;
     private Integer tiempoRestante;
     private String estado;
     private Integer prioridad;
     private ArrayList<Integer> boletos;
     private Integer usuario;
+    private ArrayList<Peticion> peticiones;
 
     public Proceso(Integer idProceso, Integer tiempoRestante, String estado) {
         this.idProceso = idProceso;
@@ -31,11 +31,11 @@ public class Proceso {
         this.estado = estado;
     }
 
-    public Integer getIdProceso() {
+    public Integer getId() {
         return idProceso;
     }
 
-    public void setIdProceso(Integer idProceso) {
+    public void setId(Integer idProceso) {
         this.idProceso = idProceso;
     }
 
@@ -72,5 +72,13 @@ public class Proceso {
                 ", boleto=" + (boletos != null ? boletos.toString() : boletos) +
                 ", usuario=" + usuario +
                 '}';
+    }
+
+    public ArrayList<Peticion> getPeticiones() {
+        return peticiones;
+    }
+
+    public void setPeticiones(ArrayList<Peticion> peticiones) {
+        this.peticiones = peticiones;
     }
 }
