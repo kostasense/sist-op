@@ -696,9 +696,6 @@ public class AdministracionProcesos {
         Planificador.pcb(procesos);
 
         int prioridadActual = procesos.get(0).getPrioridad();
-
-        int aleatorio = rd.nextInt(procesos.size()) + 1;
-        System.out.println("Random generado: " + aleatorio);
         
         while (sim > 0 && !procesos.isEmpty()) {
 
@@ -766,14 +763,6 @@ public class AdministracionProcesos {
                         }
                         
                         Planificador.pcb(procesos);
-                    }
-
-                    if (p.getId() == aleatorio) {
-                        Proceso pnuevo = new Proceso(20, rd.nextInt(8) + 3, (rd.nextInt(2) == 1 ? "Listo" : "Bloqueado"));
-                            int prioridad = rd.nextInt(4) + 1;
-                            pnuevo.setPrioridad(prioridad);
-                        procesos.add(pnuevo);
-                        System.out.println("Se crea nuevo proceso: " + pnuevo.getId());
                     }
                 }
             }
