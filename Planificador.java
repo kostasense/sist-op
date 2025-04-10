@@ -245,14 +245,6 @@ public class Planificador {
         }
     }
 
-    public static int asignarCPU(int simulacion, int quantum, Proceso p) {
-        if (p.getEstado().equals("Listo"))
-            if (rd.nextInt(2) == 0) generarPeticiones(p, p.getPeticiones());
-
-        p.setEstado("Listo");
-        return Math.min(Math.min(simulacion, quantum), p.getTiempoRestante());
-    }
-
     /*public static int asignarCPU(int simulacion, int quantum, Proceso p) {
         if (p.getEstado().equals("Listo")) {
             if (rd.nextInt(2) == 1) {
@@ -274,7 +266,7 @@ public class Planificador {
         return 0;
     }*/
 
-    public static int asignarCPUNoApropiativo(int simulacion, int quantum, Proceso p) {
+    public static int asignarCPU(int simulacion, int quantum, Proceso p) {
         if (p.getEstado().equals("Listo") && rd.nextInt(2) == 0) generarPeticiones(p, p.getPeticiones());
 
         p.setEstado("Listo");
