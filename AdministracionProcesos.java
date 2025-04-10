@@ -502,7 +502,6 @@ public class AdministracionProcesos {
 
                     System.out.printf("%n • Unidades ejecutadas: %s %n • Estado: %s. %n • Simulación restante: %d unidades. %n", 
                                     (exe == 0 ? "No se ejecuta." : String.format("%d", exe)), p.getEstado(), sim);
-                    Planificador.pcb(procesos);  
                                       
                     if (p.getEstado().equals("Terminado")) {
                         procesos.remove(p);
