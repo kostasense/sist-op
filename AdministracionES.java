@@ -24,12 +24,20 @@ public class AdministracionES {
 
 
         while (!activa.isEmpty()) {
-            for (Peticion peticion : espera)
-                if (peticion.getSector() > cabeza) derecha.add(peticion); else izquierda.add(peticion);
+            for (Peticion peticion : espera) {
+                int sector = peticion.getSector();
+                (sector == cabeza 
+                    ? (direccion == -1 ? izquierda : derecha) 
+                    : (sector > cabeza ? derecha : izquierda)
+                ).add(peticion);
+            }
+
             espera.clear();
 
             while (!derecha.isEmpty() || !izquierda.isEmpty()) {
-                peticionActual = (direccion == 1 ? derecha.poll() : izquierda.poll());
+                peticionActual = (direccion == 1 
+                                    ? derecha.poll() 
+                                    : izquierda.poll());
                 distancia = Math.abs(peticionActual.getSector() - cabeza);
                 rendimiento += (distancia + peticionActual.getCosto());
                 cabeza = peticionActual.getSector();
@@ -97,11 +105,19 @@ public class AdministracionES {
             LinkedList<Peticion> cola = colas.get(i);
             i++;
         
-            for (Peticion peticion : cola)
-                if (peticion.getSector() > cabeza) derecha.add(peticion); else izquierda.add(peticion);
+            for (Peticion peticion : cola) {
+                int sector = peticion.getSector();
+                (sector == cabeza 
+                    ? (direccion == -1 ? izquierda : derecha) 
+                    : (sector > cabeza ? derecha : izquierda)
+                ).add(peticion);
+            }
         
             while (!derecha.isEmpty() || !izquierda.isEmpty()) {
-                peticionActual = (direccion == 1 ? derecha.poll() : izquierda.poll());
+                peticionActual = (direccion == 1 
+                                    ? derecha.poll() 
+                                    : izquierda.poll());
+
                 distancia = Math.abs(peticionActual.getSector() - cabeza);
                 rendimiento += (distancia + peticionActual.getCosto());
                 cabeza = peticionActual.getSector();

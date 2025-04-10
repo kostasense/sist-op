@@ -196,6 +196,7 @@ public class Planificador {
                 peticiones.add(new Peticion(sector, tipo, costo));
             }
 
+
             p.setPeticiones(peticiones);
             procesos.add(p);
         }
@@ -229,7 +230,7 @@ public class Planificador {
 
         if (maxPeticiones == 0) return;
 
-        int numPeticiones = rd.nextInt(maxPeticiones);
+        int numPeticiones = (maxPeticiones == 1 ? maxPeticiones : rd.nextInt(maxPeticiones));
         Planificador.peticiones[p.getId()] += numPeticiones;
 
         while (numPeticiones-- > 0) {
