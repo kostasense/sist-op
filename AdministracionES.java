@@ -180,7 +180,7 @@ public class AdministracionES {
         while (!peticiones.isEmpty()) {
             Collections.sort(peticiones, Comparator.comparingInt(Peticion::getSector));
 
-            System.out.println("\nPeticiones actuales: " + peticiones.toString());
+            System.out.println("\n • Peticiones actuales: " + peticiones.toString());
 
             Peticion siguiente = null;
 
@@ -197,7 +197,7 @@ public class AdministracionES {
                 siguiente = peticiones.get(0);
             }
 
-            System.out.println("\nPeticion a atender: " + siguiente.toString());
+            System.out.println(" • Petición a atender: " + siguiente.toString());
 
             retardoGiro += (siguiente.getSector() - sectorActual);
             sectorActual = siguiente.getSector();
@@ -214,7 +214,7 @@ public class AdministracionES {
             ╚═══════════════════════════════════╝
                         """);
         
-        System.out.println("\nRetardo de giro: " + retardoGiro);
-        System.out.println("\nTiempo de transferencia: " + transferencia);
+        System.out.println(" • Retardo de giro: " + retardoGiro);
+        System.out.println(" • Tiempo de transferencia: " + transferencia);
     }
 }
