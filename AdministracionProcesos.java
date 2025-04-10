@@ -48,11 +48,15 @@ public class AdministracionProcesos {
             Proceso p = boletoPorProceso.get(boletoGanador);
             int tiempoRestante = 0, tiempoEjecucion = 0;
 
-            do {
+            //do {
+                System.out.printf("%n%n • Boleto ganador: [%d]%n • Proceso %d entra al procesador.", boletoGanador, p.getId());
+
                 tiempoRestante = p.getTiempoRestante();
                 tiempoEjecucion = Planificador.asignarCPUNoApropiativo(simulacion, p);   
+                p.setTiempoRestante((p.getTiempoRestante() - tiempoEjecucion));  
+                AdministracionES.fscan(p, 0);
 
-                if (p.getTiempoRestante() == tiempoRestante && simulacion == tiempoEjecucion) {
+                /*if (p.getTiempoRestante() == tiempoRestante && simulacion == tiempoEjecucion) {
                     System.out.printf("%n%n • Proceso %d: %s %n • Estado: %s. %n • Simulación restante: %d unidades. %n", p.getId(), 
                                      "No se ejecuta.", p.getEstado(), simulacion);
                     System.out.println("""
@@ -63,7 +67,7 @@ public class AdministracionProcesos {
 
                     Planificador.informe(procesos, terminados, pila);
                     return;
-                }
+                }*/
 
                 simulacion -= tiempoEjecucion;
 
@@ -73,9 +77,9 @@ public class AdministracionProcesos {
                     procesos.remove(p);
                 }
 
-                System.out.printf("%n%n • Boleto ganador: [%d]%n • Proceso %d: %s %n • Estado: %s. %n • Simulación restante: %d unidades. %n", boletoGanador, p.getId(), 
-                                (tiempoEjecucion == 0 ? "No se ejecuta." : String.format("Ejecuta %d unidades.", tiempoEjecucion)), p.getEstado(), simulacion);
-                Planificador.pcb(procesos);
+                System.out.printf("%n • Unidades ejecutadas: %s %n • Estado: %s. %n • Simulación restante: %d unidades. %n", 
+                                (tiempoEjecucion == 0 ? "No se ejecuta." : String.format("%d", tiempoEjecucion)), p.getEstado(), simulacion);
+                Planificador.pcb(procesos);  
 
                 try {
                     if (tiempoEjecucion != 0 && pila.peek().getId() != p.getId()) 
@@ -84,7 +88,7 @@ public class AdministracionProcesos {
                     pila.push(p);
                 } 
 
-            } while (p.getTiempoRestante() != 0 && simulacion > 0);
+            //} while (p.getTiempoRestante() != 0 && simulacion > 0);
 
             Iterator<Map.Entry<Integer, Proceso>> iter = boletoPorProceso.entrySet().iterator();
             while (iter.hasNext()) {
@@ -140,14 +144,12 @@ public class AdministracionProcesos {
 
             Proceso p = boletoPorProceso.get(boletoGanador);
 
-            int tiempo = 0;
-
             System.out.printf("%n%n • Boleto ganador: [%d]%n • Proceso %d entra al procesador.", boletoGanador, p.getId());
 
-            tiempo = Planificador.asignarCPU(simulacion,  quantum, p);
+            int tiempo = Planificador.asignarCPU(simulacion,  quantum, p);
             simulacion -= tiempo;
             p.setTiempoRestante((p.getTiempoRestante() - tiempo));   
-            AdministracionES.fscan(p, 0);
+            AdministracionES.scanN(p, 0, 5);
 
             try {
                 if (tiempo != 0 && pila.peek().getId() != p.getId()) 
@@ -167,7 +169,6 @@ public class AdministracionProcesos {
                     if (boleto.getValue().getTiempoRestante() == 0) iter.remove();
                 }
             }
-
             
             System.out.printf("%n • Unidades ejecutadas: %s %n • Estado: %s. %n • Simulación restante: %d unidades. %n", 
                              (tiempo == 0 ? "No se ejecuta." : String.format("%d", tiempo)), p.getEstado(), simulacion);
@@ -184,16 +185,20 @@ public class AdministracionProcesos {
         int i = 0;
         int quantum = simulacion / procesos.size();
 
-        System.out.printf("%n  %s%n", "• Tiempo asignado a cada proceso: %d unidades.", quantum);
+        System.out.printf("%n  • Tiempo asignado a cada proceso: %d unidades.%n", quantum);
         System.out.println("\nTabla inicial de procesos:");
         Planificador.pcb(procesos);
 
         while (simulacion > 0 && !procesos.isEmpty()) {
+
             Proceso p = procesos.get(i);
+
+            System.out.printf("%n%n • Proceso %d entra al procesador.", p.getId());
+
             int tiempo = Planificador.asignarCPU(simulacion,  quantum, p);
-                
             simulacion -= tiempo;
             p.setTiempoRestante((p.getTiempoRestante() - tiempo));
+            AdministracionES.scanN(p, 0, 3);
 
             try {
                 if (tiempo != 0 && pila.peek().getId() != p.getId()) 
@@ -210,9 +215,10 @@ public class AdministracionProcesos {
                 i++;
             }
 
-            System.out.printf("%n%n • Proceso %d: %s %n • Estado: %s. %n • Simulación restante: %d unidades. %n", p.getId(), 
-                            (tiempo == 0 ? "No se ejecuta." : String.format("Ejecuta %d unidades.", tiempo)), p.getEstado(), simulacion);
+            System.out.printf("%n • Unidades ejecutadas: %s %n • Estado: %s. %n • Simulación restante: %d unidades. %n", 
+                            (tiempo == 0 ? "No se ejecuta." : String.format("%d", tiempo)), p.getEstado(), simulacion);
             Planificador.pcb(procesos);  
+
 
             if (i == procesos.size()) 
                 i = 0;
@@ -245,11 +251,14 @@ public class AdministracionProcesos {
         while (simulacion > 0 && !procesos.isEmpty()) {
             Proceso p = procesos.get(i);
 
+            System.out.printf("%n%n • Proceso %d entra al procesador.", p.getId());
+
             int quantum = Math.max(tiempoAsignado / procesosPorUsuario[p.getUsuario()], 1);
             int tiempo = Planificador.asignarCPU(simulacion, quantum, p);
 
             simulacion -= tiempo;
             p.setTiempoRestante((p.getTiempoRestante() - tiempo));
+            AdministracionES.fscan(p, 0);
             
             try {
                 if (tiempo != 0 && pila.peek().getId() != p.getId()) 
@@ -272,8 +281,8 @@ public class AdministracionProcesos {
                 i++;
             }
 
-            System.out.printf("%n%n • Proceso %d: %s %n • Estado: %s. %n • Simulación restante: %d unidades. %n", p.getId(), 
-            (tiempo == 0 ? "No se ejecuta." : String.format("Ejecuta %d unidades.", tiempo)), p.getEstado(), simulacion);
+            System.out.printf("%n • Unidades ejecutadas: %s %n • Estado: %s. %n • Simulación restante: %d unidades. %n", 
+                            (tiempo == 0 ? "No se ejecuta." : String.format("%d", tiempo)), p.getEstado(), simulacion);
             Planificador.pcb(procesos); 
 
             if (i == procesos.size()) 
