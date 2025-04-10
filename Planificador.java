@@ -227,16 +227,12 @@ public class Planificador {
     public static void generarPeticiones(Proceso p, Collection<Peticion> peticiones) {
         int maxPeticiones = Math.min(4, (10 - Planificador.peticiones[p.getId()]));
 
-        //System.out.println("ENTRO METODO GENERARPETICIONES");
-
         if (maxPeticiones == 0) return;
 
         int numPeticiones = rd.nextInt(maxPeticiones);
         Planificador.peticiones[p.getId()] += numPeticiones;
-        //System.out.println("Planificador.peticiones[p.getId()]: " + Planificador.peticiones[p.getId()]);
 
         while (numPeticiones-- > 0) {
-            //System.out.println("ENTRO");
             int sector = rd.nextInt(20) + 1;
             char tipo = rd.nextInt(2) == 1 ? 'L' : 'E';
             int costo = (tipo == 'L' ? 1 : 2);
