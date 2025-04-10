@@ -412,7 +412,7 @@ public class AdministracionProcesos {
                 }
 
                 if (p.getId() == aleatorio) {
-                    Proceso pnuevo = new Proceso(procesos.get(procesos.size() - 1).getId() + 1, rd.nextInt(8) + 3, (rd.nextInt(2) == 1 ? "Listo" : "Bloqueado"));
+                    Proceso pnuevo = new Proceso(20, rd.nextInt(8) + 3, (rd.nextInt(2) == 1 ? "Listo" : "Bloqueado"));
                     procesos.add(pnuevo);
                     System.out.println("Se crea nuevo proceso: " + pnuevo.getId());
                 }
