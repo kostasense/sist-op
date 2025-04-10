@@ -164,6 +164,15 @@ public class AdministracionES {
 
         ArrayList<Peticion> peticiones = p.getPeticiones();
 
+        if (peticiones == null) {
+            System.out.println("""
+            ╔═══════════════════════════════════╗
+            ║ No se encontraron peticiones.     ║
+            ╚═══════════════════════════════════╝
+                        """);
+            return;
+        }
+        
         if (peticiones.isEmpty() == true) {
             System.out.println("""
             ╔═══════════════════════════════════╗
