@@ -327,10 +327,12 @@ public class AdministracionProcesos {
                     terminados.add(p.getId());
                 }
 
+                System.out.printf("%n%n • Proceso %d entra al procesador.", p.getId());
+
                 AdministracionES.cScan(p);
 
-                System.out.printf("%n%n • Proceso %d: %s %n • Estado: %s. %n • Simulación restante: %d unidades. %n", 
-                                  p.getId(), (exe == 0 ? "No se ejecuta." : String.format("Ejecuta %d unidades.", exe)), p.getEstado(), sim);
+                System.out.printf("%n • Unidades ejecutadas: %s %n • Estado: %s. %n • Simulación restante: %d unidades. %n", 
+                                (exe == 0 ? "No se ejecuta." : String.format("%d", exe)), p.getEstado(), sim);
                 
                 if (p.getEstado().equals("Terminado")) {
                     procesos.remove(cont);
@@ -393,10 +395,12 @@ public class AdministracionProcesos {
                         cont = cont - 1;
                     }
 
+                    System.out.printf("%n%n • Proceso %d entra al procesador.", p.getId());
+
                     AdministracionES.cScan(p);
 
-                    System.out.printf("%n%n • Proceso %d: %s %n • Estado: %s. %n • Simulación restante: %d unidades. %n", 
-                                      p.getId(), (exe == 0 ? "No se ejecuta." : String.format("Ejecuta %d unidades.", exe)), p.getEstado(), sim); 
+                    System.out.printf("%n • Unidades ejecutadas: %s %n • Estado: %s. %n • Simulación restante: %d unidades. %n", 
+                                    (exe == 0 ? "No se ejecuta." : String.format("%d", exe)), p.getEstado(), sim);
                                       
                     if (p.getEstado().equals("Terminado")) {
                         procesos.remove(cont);
@@ -494,10 +498,12 @@ public class AdministracionProcesos {
                         stack.push(p);
                     }
 
+                    System.out.printf("%n%n • Proceso %d entra al procesador.", p.getId());
+
                     AdministracionES.cScan(p);
 
-                    System.out.printf("%n%n • Proceso %d: %s %n • Estado: %s. %n • Simulación restante: %d unidades. %n", 
-                                      p.getId(), (exe == 0 ? "No se ejecuta." : String.format("Ejecuta %d unidades.", exe)), p.getEstado(), sim); 
+                    System.out.printf("%n • Unidades ejecutadas: %s %n • Estado: %s. %n • Simulación restante: %d unidades. %n", 
+                                    (exe == 0 ? "No se ejecuta." : String.format("%d", exe)), p.getEstado(), sim);
                                       
                     if (p.getEstado().equals("Terminado")) {
                         procesos.remove(p);
