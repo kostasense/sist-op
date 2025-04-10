@@ -188,7 +188,7 @@ public class AdministracionES {
                         """);
             return;
         }
-        
+
         if (peticiones.isEmpty() == true) {
             System.out.println("""
             ╔═══════════════════════════════════╗
@@ -217,7 +217,7 @@ public class AdministracionES {
             }
 
             if (siguiente == null) {
-                retardoGiro += 20;
+                retardoGiro += ((20 - sectorActual) + 20);
                 sectorActual = 0;
                 siguiente = peticiones.get(0);
             }
