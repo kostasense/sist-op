@@ -477,8 +477,10 @@ public class AdministracionProcesos {
                 int tiempoRestante = p.getTiempoRestante();
 
                 int exe = Planificador.asignarCPUNoApropiativo(sim, p);
+
+                p.setTiempoRestante(p.getTiempoRestante() - exe);
                 
-                if (p.getTiempoRestante() != tiempoRestante || exe == 0) {
+                if (p.getTiempoRestante() != tiempoRestante) {
 
                     sim -= exe;
 
