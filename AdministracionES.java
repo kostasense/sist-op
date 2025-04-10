@@ -55,4 +55,68 @@ public class AdministracionES {
         System.out.printf(" • Rendimiento: %d%n", rendimiento);
         p.getPeticiones().removeAll(p.getPeticiones());
     }
+
+    public static void cScan(Proceso p) {
+
+        System.out.println("\n");
+        System.out.println("""
+                    ┌───────────────────────────┐
+                    │         SES-HHDD          │       
+                    └───────────────────────────┘""");
+
+        ArrayList<Peticion> peticiones = p.getPeticiones();
+
+        if (peticiones.isEmpty() == true) {
+            System.out.println("""
+            ╔═══════════════════════════════════╗
+            ║ No se encontraron peticiones.     ║
+            ╚═══════════════════════════════════╝
+                        """);
+            return;
+        }
+
+        int retardoGiro = 0;
+        int transferencia = 0;
+        int sectorActual = 0;
+
+        while (!peticiones.isEmpty()) {
+            Collections.sort(peticiones, Comparator.comparingInt(Peticion::getSector));
+
+            System.out.println("\nPeticiones actuales: " + peticiones.toString());
+
+            Peticion siguiente = null;
+
+            for (Peticion peticion : peticiones) {
+                if (peticion.getSector() >= sectorActual) {
+                    siguiente = peticion;
+                    break;
+                }
+            }
+
+            if (siguiente == null) {
+                retardoGiro += 20;
+                sectorActual = 0;
+                siguiente = peticiones.get(0);
+            }
+
+            System.out.println("\nPeticion a atender: " + siguiente.toString());
+
+            retardoGiro += (siguiente.getSector() - sectorActual);
+            sectorActual = siguiente.getSector();
+            transferencia += siguiente.getCosto();
+
+            peticiones.remove(siguiente);
+
+            Planificador.generarPeticiones(p, peticiones);
+        }
+
+        System.out.println("""
+            ╔═══════════════════════════════════╗
+            ║ Peticiones terminadas.            ║
+            ╚═══════════════════════════════════╝
+                        """);
+        
+        System.out.println("\nRetardo de giro: " + retardoGiro);
+        System.out.println("\nTiempo de transferencia: " + transferencia);
+    }
 }

@@ -278,7 +278,7 @@ public class AdministracionProcesos {
             (tiempo == 0 ? "No se ejecuta." : String.format("Ejecuta %d unidades.", tiempo)), p.getEstado(), simulacion);
             Planificador.pcb(procesos); 
 
-            if (i == procesos.size()) 
+            if (i == procesos.size())
                 i = 0;
         }
 
@@ -364,7 +364,9 @@ public class AdministracionProcesos {
 
                 int exe = Planificador.asignarCPUNoApropiativo(sim, p);
 
-                if (p.getTiempoRestante() != tiempoRestante || exe == 0) {
+                p.setTiempoRestante(p.getTiempoRestante() - exe);
+
+                if (p.getTiempoRestante() != tiempoRestante) {
 
                     sim -= exe;
 
@@ -381,6 +383,8 @@ public class AdministracionProcesos {
                     } else {
                         cont = cont - 1;
                     }
+
+                    AdministracionES.cScan(p);
 
                     System.out.printf("%n%n • Proceso %d: %s %n • Estado: %s. %n • Simulación restante: %d unidades. %n", 
                                       p.getId(), (exe == 0 ? "No se ejecuta." : String.format("Ejecuta %d unidades.", exe)), p.getEstado(), sim); 
