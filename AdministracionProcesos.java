@@ -144,12 +144,10 @@ public class AdministracionProcesos {
 
             System.out.printf("%n%n • Boleto ganador: [%d]%n • Proceso %d entra al procesador.", boletoGanador, p.getId());
 
-            //do {
-                tiempo = Planificador.asignarCPU(simulacion,  quantum, p);
-                simulacion -= tiempo;
-                p.setTiempoRestante((p.getTiempoRestante() - tiempo));   
-                AdministracionES.fscan(p, 0);
-            //} while (!p.getPeticiones().isEmpty());
+            tiempo = Planificador.asignarCPU(simulacion,  quantum, p);
+            simulacion -= tiempo;
+            p.setTiempoRestante((p.getTiempoRestante() - tiempo));   
+            AdministracionES.fscan(p, 0);
 
             try {
                 if (tiempo != 0 && pila.peek().getId() != p.getId()) 

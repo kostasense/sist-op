@@ -14,7 +14,6 @@ public class AdministracionES {
                     └───────────────────────────┘""");
 
         LinkedList<Peticion> q = new LinkedList<>(p.getPeticiones());
-        //System.out.println("ENTRO METODO FSCAN");
 
         int distancia = 0, rendimiento = 0, direccion = 1;
         Peticion peticionActual = null;
@@ -47,15 +46,13 @@ public class AdministracionES {
             }
         }
 
-        if (rendimiento != 0) {
-            System.out.println("""
-                ╔═══════════════════════════════════╗
-                ║ Peticiones terminadas.            ║
-                ╚═══════════════════════════════════╝
-                            """);
+        System.out.println("""
+            ╔═══════════════════════════════════╗
+            ║ Peticiones terminadas.            ║
+            ╚═══════════════════════════════════╝
+                        """);
 
-            System.out.printf(" • Rendimiento: %d%n", rendimiento);
-            p.getPeticiones().removeAll(p.getPeticiones());
-        }
+        System.out.printf(" • Rendimiento: %d%n", rendimiento);
+        p.getPeticiones().removeAll(p.getPeticiones());
     }
 }

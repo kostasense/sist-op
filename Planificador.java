@@ -246,10 +246,8 @@ public class Planificador {
     }
 
     public static int asignarCPU(int simulacion, int quantum, Proceso p) {
-        if (p.getEstado().equals("Listo")) {
+        if (p.getEstado().equals("Listo"))
             if (rd.nextInt(2) == 0) generarPeticiones(p, p.getPeticiones());
-            return Math.min(Math.min(simulacion, quantum), p.getTiempoRestante());
-        }
 
         p.setEstado("Listo");
         return Math.min(Math.min(simulacion, quantum), p.getTiempoRestante());
@@ -275,8 +273,22 @@ public class Planificador {
 
         return 0;
     }*/
-    
+
+    public static int asignarCPUNoApropiativo(int simulacion, int quantum, Proceso p) {
+        if (p.getEstado().equals("Listo") && rd.nextInt(2) == 0) generarPeticiones(p, p.getPeticiones());
+
+        p.setEstado("Listo");
+        return Math.min(Math.min(simulacion, quantum), p.getTiempoRestante());
+    }
+
     public static int asignarCPUNoApropiativo(int sim, Proceso p) {
+        if (p.getEstado().equals("Listo") && rd.nextInt(2) == 0) generarPeticiones(p, p.getPeticiones());
+
+        p.setEstado("Listo");
+        return Math.min(sim, p.getTiempoRestante());
+    }
+    
+    /*public static int asignarCPUNoApropiativo(int sim, Proceso p) {
         if (p.getEstado().equals("Listo")) {
             if (rd.nextInt(2) == 0) {
                 int exe = Math.min(sim, p.getTiempoRestante());
@@ -309,5 +321,5 @@ public class Planificador {
             return sim;
         }
         return 0;
-    }
+    }*/
 }
