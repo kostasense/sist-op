@@ -766,47 +766,67 @@ public class AdministracionProcesos {
     
         Planificador.informe(procesos, terminados, pila);
     }
-    
 
     public static void masCortoPrimero(ArrayList<Proceso> procesos, int sim, int quantum) {
-
+        int cabeza = 10;
         System.out.println("\nTabla inicial de procesos:");
         Planificador.pcb(procesos);
     
         Stack<Proceso> pila = new Stack<>();
         ArrayList<Integer> terminados = new ArrayList<>();
-    
+        
         while (sim > 0 && !procesos.isEmpty()) {
+            // Buscar el proceso con menor tiempo restante
             Proceso menor = null;
-            
             for (Proceso p : procesos) {
-                if (!p.getEstado().equals("Terminado") && (menor == null || p.getTiempoRestante() < menor.getTiempoRestante())) {
+                if (!p.getEstado().equals("Terminado") && 
+                    (menor == null || p.getTiempoRestante() < menor.getTiempoRestante())) {
                     menor = p;
                 }
             }
-            
-            if (menor == null) break; 
     
-            int exe = Planificador.asignarCPU(sim, quantum, menor);
-            sim -= exe;
-            menor.setTiempoRestante(menor.getTiempoRestante() - exe);
-            
-            try {
-                if (exe != 0 && pila.peek().getId() != menor.getId()) 
-                    pila.push(menor);
-            } catch (Exception e) {
+            if (menor == null) break;
+    
+            // Si está bloqueado, atender sus peticiones de E/S
+            if (menor.getEstado().equals("Bloqueado") && !menor.getPeticiones().isEmpty()) {
+                System.out.printf("\nProceso %d bloqueado. Atendiendo peticiones SSTF...", menor.getId());
+                AdministracionES.sstf(menor, cabeza);
+                
+                // Actualizar posición del cabezal
+                if (!menor.getPeticiones().isEmpty()) {
+                    cabeza = menor.getPeticiones().get(menor.getPeticiones().size()-1).getSector();
+                }
+                
+                // Cambiar estado a Listo si se atendieron todas las peticiones
+                if (menor.getPeticiones().isEmpty()) {
+                    menor.setEstado("Listo");
+                }
+            }
+    
+            // Ejecutar el proceso
+            int tiempoEjecucion = Planificador.asignarCPU(sim, quantum, menor);
+            sim -= tiempoEjecucion;
+            menor.setTiempoRestante(menor.getTiempoRestante() - tiempoEjecucion);
+    
+            // Registrar cambio de contexto si es necesario
+            if (tiempoEjecucion > 0 && (pila.isEmpty() || pila.peek().getId() != menor.getId())) {
                 pila.push(menor);
             }
     
+            // Verificar si terminó
             if (menor.getTiempoRestante() <= 0) {
                 menor.setEstado("Terminado");
                 terminados.add(menor.getId());
                 procesos.remove(menor);
             }
     
-            System.out.printf("%n%n • Proceso %d: %s %n • Estado: %s. %n • Simulación restante: %d unidades. %n", 
-                              menor.getId(), (exe == 0 ? "No se ejecuta." : String.format("Ejecuta %d unidades.", exe)), menor.getEstado(), sim);
-            
+            // Mostrar información
+            System.out.printf("\n\nProceso %d: %s\nEstado: %s\nTiempo simulación restante: %d",
+                             menor.getId(),
+                             (tiempoEjecucion == 0 ? "No ejecutado" : 
+                              "Ejecutado por " + tiempoEjecucion + " unidades"),
+                             menor.getEstado(), sim);
+                             System.out.println("");
             Planificador.pcb(procesos);
         }
     

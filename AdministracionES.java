@@ -242,4 +242,81 @@ public class AdministracionES {
         System.out.println(" • Retardo de giro: " + retardoGiro);
         System.out.println(" • Tiempo de transferencia: " + transferencia);
     }
+
+    public static void sstf(Proceso p, int cabeza) {
+        if (p.getPeticiones().isEmpty()) {
+            System.out.println("\nNo hay peticiones de E/S para atender.");
+            return;
+        }
+    
+        System.out.println("\n--- Algoritmo SSTF Simplificado ---");
+        System.out.println("Posición inicial del cabezal: " + cabeza);
+        
+        // Copiamos las peticiones para no modificar las originales durante el proceso
+        LinkedList<Peticion> peticiones = new LinkedList<>(p.getPeticiones());
+        int rendimientoTotal = 0;
+        
+        while (!peticiones.isEmpty()) {
+            // Paso 1: Buscar la petición más cercana al cabezal
+            Peticion masCercana = null;
+            int distanciaMinima = Integer.MAX_VALUE;
+            int indiceMasCercana = -1;
+            
+            for (int i = 0; i < peticiones.size(); i++) {
+                Peticion actual = peticiones.get(i);
+                int distancia = Math.abs(actual.getSector() - cabeza);
+                
+                if (distancia < distanciaMinima) {
+                    distanciaMinima = distancia;
+                    masCercana = actual;
+                    indiceMasCercana = i;
+                }
+            }
+            
+            if (masCercana == null) break;
+            
+            // Paso 2: Atender la petición
+            int costo = masCercana.getCosto();
+            rendimientoTotal += (distanciaMinima + costo);
+            
+            System.out.printf("\nAtendiendo: Sector %d, Tipo %c (Distancia: %d, Costo: %d)",
+                             masCercana.getSector(), masCercana.getTipo(), 
+                             distanciaMinima, costo);
+            
+            // Paso 3: Mover el cabezal y eliminar la petición atendida
+            cabeza = masCercana.getSector();
+            peticiones.remove(indiceMasCercana);
+            
+            // Paso 4: Posibilidad de generar nuevas peticiones (opcional)
+            if (rd.nextBoolean() && peticiones.size() < 5) {
+                int nuevoSector = rd.nextInt(20) + 1;
+                char tipo = rd.nextBoolean() ? 'L' : 'E';
+                int nuevoCosto = (tipo == 'L' ? 1 : 2);
+                Peticion nueva = new Peticion(nuevoSector, tipo, nuevoCosto);
+                
+                // Verificar que no exista ya una petición para este sector
+                boolean existe = false;
+                for (Peticion pet : peticiones) {
+                    if (pet.getSector() == nuevoSector) {
+                        existe = true;
+                        break;
+                    }
+                }
+                
+                if (!existe) {
+                    peticiones.add(nueva);
+                    System.out.printf("\n → Nueva petición generada: %s", nueva);
+                }
+            }
+        }
+        
+        System.out.println("\n\n--- Resumen ---");
+        System.out.println("Rendimiento total: " + rendimientoTotal);
+        System.out.println("Posición final del cabezal: " + cabeza);
+        System.out.println("Peticiones atendidas: " + (p.getPeticiones().size() - peticiones.size()));
+        
+        // Actualizar las peticiones del proceso
+        p.getPeticiones().clear();
+        p.getPeticiones().addAll(peticiones);
+    }
 }
