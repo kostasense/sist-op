@@ -768,7 +768,7 @@ public class AdministracionProcesos {
     }
 
     public static void masCortoPrimero(ArrayList<Proceso> procesos, int sim, int quantum) {
-        int cabeza = 10;
+        int cabeza = 0;
         System.out.println("\nTabla inicial de procesos:");
         Planificador.pcb(procesos);
     
